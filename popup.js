@@ -5,7 +5,7 @@
 var bgPage = chrome.extension.getBackgroundPage();
 var DEL_MARK = "#del#";
 var BLANK_URL = "about:blank";
-var logging = true;
+var logging = false;
 function Note(id){
     this.id = id;
     var newArray = id.split(';');

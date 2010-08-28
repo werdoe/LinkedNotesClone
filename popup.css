@@ -97,7 +97,9 @@ div.highlight
 
 #NoteText
 {
-	overflow: auto;
+	overflow: hidden;
+	-webkit-box-flex: 1;
+	-webkit-box-sizing: border-box;
 }
 
 textarea.note
@@ -108,6 +110,8 @@ textarea.note
 	resize: none;
 	border: 0px;
 	background: #ffd;
+	overflow-x: hidden;
+	padding: 3px;
 }
 
 textarea.note:focus 
