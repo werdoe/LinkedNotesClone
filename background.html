@@ -1,0 +1,108 @@
+<html>
+<head>
+<script>
+var logging  = true;
+  function removeItem(key) {
+    try {
+      log("Inside removeItem:" + key);
+      window.localStorage.removeItem(key);
+    }catch(e) {
+      log("Error inside removeItem");
+      log(e);
+    }
+    log("Return from removeItem" + key);
+  }
+  
+  function setItem(key, value) {
+    try {
+      log("Inside setItem:" + key + ":" + value);
+      window.localStorage.removeItem(key);
+      window.localStorage.setItem(key, value);
+    }catch(e) {
+      log("Error inside setItem");
+      log(e);
+    }
+    log("Return from setItem" + key + ":" +  value);
+  }
+  function getItem(key) {
+    var value;
+    log('Get Item:' + key);
+    try {
+      value = window.localStorage.getItem(key);
+    }catch(e) {
+      log("Error inside getItem() for key:" + key);
+	  log(e);
+	  value = "null";
+    }
+    log("Returning value: " + value);
+    return value;
+  }
+
+  function clearStrg() {
+    log('about to clear local storage');
+    window.localStorage.clear();
+    log('cleared');
+  }
+function getAllKeys()
+{
+	var list = [];
+	try {    
+		for (var i = 0; i < window.localStorage.length; i++) 
+		{
+			list[i] = window.localStorage.key(i);
+		}
+	}catch(e) {
+      log("Error inside getAllKeys()");
+	  log(e);
+	  value = "null";
+    }
+    log("Returning value: " + list);
+    return list;
+}
+
+function addNote(url, text)
+{
+	var key = createKey(url);
+	setItem(key, text);
+	return key;
+}
+
+function createKey(url)
+{
+	var currentDate = new Date();
+	var key = currentDate.getTime()+";"+escape(url);
+	return key;
+}
+
+function onCopyToNote(info, tab)
+{
+	if (!info.selectionText || info.selectionText.length == 0)
+	{
+   		return;
+   	}
+	else
+	{
+		addNote(tab.url, info.selectionText);
+	}
+}
+
+function installMenu()
+{
+	var createProperties = { "title": chrome.i18n.getMessage("copy_to_note"), 
+							"type": "normal",
+							"contexts": ["selection"],
+							"onclick": onCopyToNote
+							};
+	return chrome.contextMenus.create(createProperties); 
+}
+
+function log(txt) {
+    if(logging) {
+      console.log(txt);
+    }
+}
+
+installMenu();
+</script>
+</head>
+</html>

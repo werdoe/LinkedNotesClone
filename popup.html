@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="popup.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="jquery.js"></script> 
+	<script type="text/javascript" src="splitter.js"></script> 
+	<script type="text/javascript" src="popup.js"></script>
+	<script type="text/javascript" src="jquery.contextmenu.r2.packed.js"></script>
+</head>
+
+<body onload="notes.FillList();" onUnload="notes.SaveState();">
+	<div id="Menu">
+		<!--<a href="javascript:void(0);" class="options_button" id="options" onclick="openOptions();"></a>-->
+		<a href="javascript:void(0);" class="remove_button" id="remove_note" onclick="notes.RemoveNote();"></a>
+		<a href="javascript:void(0);" class="add_button" id="add_note" onclick="notes.AddEmptyNote();"></a>
+	</div>
+	<div id="LinkedNotes">
+ 		<div id="NotesList" onselectstart="return false;"></div> 	
+		<div id="NoteText"><textarea class="note" onBlur="notes.UpdateNote(this);" onChange="notes.UpdateNote(this);"></textarea></div> 
+	</div>
+			<div class="contextMenu" id="myMenu1"> 
+			<ul> 
+				 <li class="copy" id="copy"><img src="images/document-copy.png" /> <span>Copy</span></li> 
+			 </ul> 
+			</div>
+			<div class="contextMenu" id="myMenu2">
+			<ul> 
+				 <li class="add_button" id="add"><img src="images/sticky_note_plus.png" /> <span>Add</span></li> 
+				 <li class="remove_button" id="remove"><img src="images/sticky_note_minus.png" /> <span>Remove</span></li> 
+			 </ul> 
+			</div> 
+<script type="text/javascript">
+$().ready(function() {
+	$("#LinkedNotes").splitter({
+		type: "h", 
+		sizeTop: true,
+		localStorage: "list_height",
+		accessKey: "P"
+	});
+	$.contextMenu.defaults({
+	    menuStyle : {
+		    fontFamily : "Arial, Helvetica, sans-serif",
+	    	width:"auto"
+	    },
+		itemHoverStyle: {
+		    fontFamily : "Arial, Helvetica, sans-serif",
+			border: "1px solid #3366cc",
+ 			backgroundColor: "rgba(182, 212, 252, 0.496094)",			
+		}
+	});
+	$('#NoteText').contextMenu('myMenu1', {
+      bindings: {
+        'copy': function(t) {
+          copy();
+        }		
+      }
+	});
+	$('#NotesList').contextMenu('myMenu2', {
+      bindings: {
+        'add': function(t) {
+          notes.AddEmptyNote();
+        },
+        'remove': function(t) {
+          notes.RemoveNote();
+        }
+      }
+    });
+	$('textarea.note').select(positionSave);
+	document.getElementById("add_note").setAttribute("title", chrome.i18n.getMessage("add_note"));
+	document.getElementById("remove_note").setAttribute("title", chrome.i18n.getMessage("remove_note"));
+	$('li.add_button span').text(chrome.i18n.getMessage("add_note"));
+	$('li.remove_button span').text(chrome.i18n.getMessage("remove_note"));
+	$('li.copy span').text(chrome.i18n.getMessage("menu_copy"));
+
+	//document.getElementById("options").setAttribute("title", chrome.i18n.getMessage("options"));
+});
+</script> </body>
+</html>

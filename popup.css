@@ -1,0 +1,133 @@
+body 
+{
+	dir: __MSG_@@bidi_dir__;
+	padding: 2px;
+	min-width: 90px;
+	font-family: "Helvetica", "Arial", sans-serif;
+	font-size: 80%;
+	overflow:hidden;
+}
+
+#Menu 
+{
+	height: 20px;
+	width: 300px;
+	border: 1px;
+}
+
+a.add_button, a.remove_button, a.options_button
+{
+	float: right;
+	margin: 2px;
+	height: 16px;
+	width: 16px;
+}
+
+
+a.add_button
+{
+	background: url(images/sticky_note_plus.png) no-repeat 0px 0px;
+}
+
+a.remove_button
+{
+	background: url(images/sticky_note_minus.png) no-repeat 0px 0px;
+}
+
+a.options_button
+{
+	background: url(images/hammer-screwdriver.png) no-repeat 0px 0px;
+}
+
+#LinkedNotes 
+{
+	height: 558px;
+	width: 300px;
+	border: 1px solid;
+	border-color: #d6d6d6;
+}
+
+#NotesList 
+{
+	overflow: auto;
+	/* Initial/min/max height for this pane */
+	height: 300px;
+	min-height: 0px;
+	max-height: 400px;
+	-webkit-box-flex: 1;
+	-webkit-box-sizing: border-box;
+	padding: 1px 3px 1px 1px;
+}
+
+div.note
+{
+ 	-webkit-transition: background 0.1s ease-in;
+ 	border: 1px solid rgba(255, 255, 255, 0);
+	border-bottom-left-radius: 2px 2px;
+	border-bottom-right-radius: 2px 2px;
+	border-top-left-radius: 2px 2px;
+	border-top-right-radius: 2px 2px;
+	cursor: default;
+	display: block;
+	line-height: 20px;
+	white-space:nowrap;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+	margin: -1px 0px;
+}
+
+
+div.highlight
+{
+	border-color: #3366cc;
+ 	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.8)), to(rgba(255,255,255,0)));
+ 	background-color: rgba(182, 212, 252, 0.496094);
+}
+
+#NoteText
+{
+	overflow: auto;
+}
+
+textarea.note
+{
+	height: 100%;
+	width: 100%;
+	resize: none;
+	border: 0px;
+	background: #ffd;
+}
+
+textarea.note:focus 
+{
+	outline: 0px solid #3366cc;
+} 
+
+#LinkedNotes .hsplitbar 
+{
+	-webkit-transition: background 0.15s ease-in;
+	height: 4px;
+	background: #d6d6d6 url(images/hgrabber.gif) no-repeat center;
+}
+
+#LinkedNotes .hsplitbar.active, #LinkedNotes .hsplitbar:hover 
+{
+	background: #B6CCF3 url(images/hgrabber.gif) no-repeat center;
+}
+
+span.simple, span.linked
+{
+	vertical-align: middle;
+	-webkit-padding-start: 20px;
+}
+
+span.simple
+{
+	background: url(images/sticky_note_text.png) no-repeat 0px 0px;
+}
+
+span.linked
+{
+	background: url(images/sticky_note_arrow.png) no-repeat 0px 0px;
+}

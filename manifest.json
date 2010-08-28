@@ -1,0 +1,24 @@
+{
+  "name": "LinkedNotes",
+  "version": "0.6",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
+  "background_page": "background.html",
+  "permissions": [
+    "contextMenus",    
+    "tabs",
+    "unlimited_storage"
+  ],
+  "icons": {
+    "16": "images/sticky_note_pin.png",
+    "24": "images/notepad24.png",
+    "48": "images/notepad48.png",
+    "128": "images/notepad128.png"
+  },
+  "browser_action": {
+    "default_title": "LinkedNotes",
+    "default_icon": "images/notepad24.png",
+    "popup": "popup.html"
+  },
+  "minimum_chrome_version": "6.0.0.0"
+}

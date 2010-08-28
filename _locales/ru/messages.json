@@ -1,0 +1,45 @@
+{
+"extDescription": {
+      "message": "Копирует выделенный текст в список заметок из контекстного меню. Заметка сохраняется вместе с адресом страницы. По двойному клику на заметке откроется связанный адрес."
+  },
+"add_note": {
+    "message": "Добавить заметку",
+    "description": "Button adds new note"
+  },
+"remove_note": {
+    "message": "Удалить заметку",
+    "description": "Button deletes selected note"
+  },
+"options": {
+    "message": "Настройки",
+    "description": "Button shows page with options"
+  },
+"copy_to_note": {
+    "message": "Копировать в заметки",
+    "description": "Menu item thats copy selected text to notes"
+  },
+"title_date": {
+    "message": "Редактировалась: $date$",
+    "description": "Last modified date tooltip",
+    "placeholders": {
+      "date": {
+        "content": "$1",
+        "example": "12 jul 2010"
+      }
+    }
+},
+"title_url": {
+    "message": "Источник: $url$",
+    "description": "Note source URL tooltip",
+    "placeholders": {
+      "url": {
+        "content": "$1",
+        "example": "http://google.com/"
+      }
+    }
+  },
+"menu_copy":{
+	"message": "Копировать"
+	}
+
+}

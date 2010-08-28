@@ -1,0 +1,46 @@
+{
+"extDescription": {
+      "message": "Copy selected text to new note from context menu. Note will be linked with web address. Go to this address by double click note in list."
+  },
+"add_note": {
+    "message": "New Note",
+    "description": "Button adds new note"
+  },
+"remove_note": {
+    "message": "Delete Note",
+    "description": "Button deletes selected note"
+  },
+"options": {
+    "message": "Options",
+    "description": "Button shows page with options"
+  },
+"copy_to_note": {
+    "message": "Copy to Note",
+    "description": "Menu item thats copy selected text to notes"
+  },
+"title_date": {
+    "message": "Last modified: $date$",
+    "description": "Last modified date tooltip",
+    "placeholders": {
+      "date": {
+        "content": "$1",
+        "example": "12 jul 2010"
+      }
+    }
+},
+"title_url": {
+    "message": "From: $url$",
+    "description": "Note source URL tooltip",
+    "placeholders": {
+      "url": {
+        "content": "$1",
+        "example": "http://google.com/"
+      }
+    }
+  },
+"menu_copy":{
+	"message": "Copy"
+	}
+
+
+}
