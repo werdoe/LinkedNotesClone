@@ -464,6 +464,9 @@ function GoogleBookmarks(){
 			bm.id.push(bookmark.find("bkmk_id:first").text());
             bm.url = bm.url.replace("#" + bm.title, "");
             bm.url = bm.url.replace(BLANK_URL, "");
+			bm.note = bm.note.replace(/\\\\/gm,"\r");
+			bm.note = bm.note.replace(/\\n/gm,"\n");
+			bm.note = bm.note.replace(/\r/gm,"\\");
             gbm.bookmarks.push(bm);
         });
         
@@ -569,10 +572,13 @@ function SyncNotes(){
 					if(n.text != DEL_MARK)
 					{
 	                    var time = n.modified.getTime();
+						var enote = n.text.replace(/\\/gm, "\\\\");
+						enote = enote.replace(/\n/gm,"\\n");  
+
 	                    gbm.CreateBookmark({
 	                        url: n.url + "#" + time,
 	                        title: time,
-	                        note: n.text
+	                        note: enote
 	                    });						
 					}
 					else
