@@ -344,7 +344,7 @@ function GoogleBookmarks(){
                 for (var pos = 0; encoded.length > 1900; pos++) {
                     var linebr = encoded.substr(1897, 3);
                     var k = linebr.indexOf("%");
-                    if (k = -1) 
+                    if (k == -1) 
                         k = 2;
                     linebr = encoded.substr(0, 1897 + k);
                     var part_note = "";
@@ -359,7 +359,7 @@ function GoogleBookmarks(){
                         } 
                         catch (err) {
                             if (logging) 
-                                console.log("Error decode string");
+                                console.log("Error decode string");	
                             
                         };
                     };
@@ -371,12 +371,14 @@ function GoogleBookmarks(){
                     result.push(nbm);
                     encoded = encoded.slice(1897 + k);
                 }
-                var nbm = {
-                    url: bm.url + '-' + result.length,
-                    title: bm.title + '-' + result.length,
-                    note: decodeURIComponent(encoded)
-                };
-                result.push(nbm);
+				if(encoded.length > 0){
+	                var nbm = {
+	                    url: bm.url + '-' + result.length,
+	                    title: bm.title + '-' + result.length,
+	                    note: decodeURIComponent(encoded)
+	                };
+	                result.push(nbm);					
+				}
             }
             else {
                 result.push(bm);
