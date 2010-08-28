@@ -248,6 +248,7 @@ function GoogleBookmarks(){
         this.sig = "";
         this.error = false;
         this.bookmarks = [];
+		this.createdid = [];
     };
     
     this.LoadBookmarks = function(afterLoaded){
@@ -298,56 +299,144 @@ function GoogleBookmarks(){
         });
     };
     
-    this.CreateBookmark = function(bm, afterCreate){
+    this.CreateBookmark = function(bm){
         if (logging) 
             console.log("Creation bookmark");
-		//max length 318 unicode chars or ?Content-Length:38
-        $.ajax({
-            type: "post",
-            url: this.url + "mark",
-            data: {
-                bkmk: bm.url,
-                title: bm.title,
-                labels: "LinkedNotes",
-                annotation: bm.note,
-                prev: '',
-                sig: this.sig
-            },
-            success: function(data, textStatus){
-                if(data)
-				{
-					
-				}
-				
-				if (gbm) {
-                    gbm.error = false;
-                }
-            },
-            error: function(){
-                if (gbm) {
-                    gbm.error = true;
-                }
-                
-                if (logging) 
-                    console.log("Error during creation bookmark");
-            },
-            complete: function(){
-                if (afterCreate) 
-                    afterCreate();
-            }
-        });
+		var collection = this.SplitBookmark(bm);
+		for(var i = 0; i < collection.length; i++)
+		{
+	        $.ajax({
+	            type: "post",
+	            url: this.url + "mark",
+	            data: {
+	                bkmk: collection[i].url,
+	                title: collection[i].title,
+	                labels: "LinkedNotes",
+	                annotation: collection[i].note,
+	                prev: '',
+	                sig: this.sig
+	            },
+	            success: function(data, textStatus){			
+					if (gbm) {
+	                    gbm.error = false;
+	                }
+	            },
+	            error: function(){
+	                if (gbm) {
+	                    gbm.error = true;
+	                }
+	                
+	                if (logging) 
+	                    console.log("Error during creation bookmark");
+	            },
+	            complete: function(){
+	            }
+	        });		
+		}
     };
     
-    this.DeleteBookmark = function(bmid, afterDeleted){
-        if (logging) 
+    this.SplitBookmark = function(bm){
+        var result = new Array();
+        if (bm) {
+            var encoded = encodeURIComponent(bm.note);
+            var len = encoded.length;
+            if (len > 1900) {
+                for (var pos = 0; encoded.length > 1900; pos++) {
+                    var linebr = encoded.substr(1897, 3);
+                    var k = linebr.indexOf("%");
+                    if (k = -1) 
+                        k = 2;
+                    linebr = encoded.substr(0, 1897 + k);
+                    var part_note = "";
+                    try {
+                        part_note = decodeURIComponent(linebr);
+                    } 
+                    catch (err) {
+                        //ups we divide unicode char
+                        try {
+                            part_note = decodeURIComponent(linebr.substr(0, linebr.length - 3));
+                            k = k - 3;
+                        } 
+                        catch (err) {
+                            if (logging) 
+                                console.log("Error decode string");
+                            
+                        };
+                    };
+                    var nbm = {
+                        url: bm.url + '-' + pos,
+                        title: bm.title + '-' + pos,
+                        note: part_note
+                    };
+                    result.push(nbm);
+                    encoded = encoded.slice(1897 + k);
+                }
+                var nbm = {
+                    url: bm.url + '-' + result.length,
+                    title: bm.title + '-' + result.length,
+                    note: decodeURIComponent(encoded)
+                };
+                result.push(nbm);
+            }
+            else {
+                result.push(bm);
+            }
+        }
+        return result;
+    };
+    
+    this.MergeBookmarks = function(){
+        var allmerged = [];
+        var mergedbm = null;
+        for (var i = 0; i < this.bookmarks.length; i++) {
+            //all bookmarks sorted by title so parts following straight
+            var cur_bm = this.bookmarks[i];
+            var k = cur_bm.title.indexOf("-");
+            if (k != -1) {
+                var title = cur_bm.title.substr(0, k);
+				
+                if (mergedbm && mergedbm.title == title) {
+                        mergedbm.note = mergedbm.note + cur_bm.note;
+                        mergedbm.id.push(cur_bm.id[0]);
+                }
+                else {
+                        if(mergedbm){
+							allmerged.push(mergedbm);	
+						}
+						
+                        mergedbm = {
+                            id: new Array(),
+                            title: title,
+                            url: cur_bm.url,
+                            note: cur_bm.note,
+                            timestamp: cur_bm.timestamp,
+                            TitleDate: function(){
+                                return new Date(parseInt(this.title));
+                            }
+                        }
+                        mergedbm.id.push(cur_bm.id[0]);
+                    }
+            }
+            else {
+                allmerged.push(cur_bm);
+            }
+        }
+        if (mergedbm) {
+            allmerged.push(mergedbm);
+        }
+        this.bookmarks = allmerged;
+    };
+	
+    this.DeleteBookmark = function(bmid){
+		if (logging) 
             console.log("Deleting bookmark");
-        $.post(this.url + "mark", {
-            dlq: bmid,
-            sig: this.sig
-        }, function(data){
-            if (afterDeleted) 
-                afterDeleted();
-        }, "text");
+		for(var i = 0; i < bmid.length; i++){
+			var bm_id = bmid[i];
+	        $.post(this.url + "mark", {
+	            dlq: bm_id,
+	            sig: this.sig
+	        }, function(data){ }, "text");			
+		}
     };
     
     this.ParseBookmarks = function(bookmarksXml){
@@ -363,7 +452,7 @@ function GoogleBookmarks(){
         $(bookmarksXml).find("item").each(function(){
             var bookmark = $(this);
             var bm = {
-                id: bookmark.find("bkmk_id:first").text(),
+                id: new Array(),
                 title: bookmark.find("bkmk_title:first").text(),
                 url: bookmark.find("link:first").text(),
                 note: bookmark.find("bkmk_annotation:first").text(),
@@ -372,12 +461,14 @@ function GoogleBookmarks(){
                     return new Date(parseInt(this.title));
                 }
             };
+			bm.id.push(bookmark.find("bkmk_id:first").text());
             bm.url = bm.url.replace("#" + bm.title, "");
             bm.url = bm.url.replace(BLANK_URL, "");
             gbm.bookmarks.push(bm);
         });
         
         this.bookmarks.sort(this.SortBookmark);
+		this.MergeBookmarks();
         if (logging) 
             console.log("Bookmarks parsed");
     };
