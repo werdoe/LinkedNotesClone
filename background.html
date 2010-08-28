@@ -1,7 +1,7 @@
 <html>
 <head>
 <script>
-var logging  = true;
+var logging  = false;
   function removeItem(key) {
     try {
       log("Inside removeItem:" + key);
@@ -43,6 +43,7 @@ var logging  = true;
     window.localStorage.clear();
     log('cleared');
   }
+  
 function getAllKeys()
 {
 	var list = [];
@@ -60,9 +61,17 @@ function getAllKeys()
     return list;
 }
 
-function addNote(url, text)
+function addNote(url, text, date)
 {
-	var key = createKey(url);
+	var key = null;
+	if(date)
+	{
+		key = date.getTime()+";"+escape(url);
+	}
+	else
+	{
+		key = createKey(url);
+	}		
 	setItem(key, text);
 	return key;
 }
@@ -82,7 +91,11 @@ function onCopyToNote(info, tab)
    	}
 	else
 	{
+		chrome.browserAction.setIcon({ 'path' : 'images/notepad24hl.png'});
 		addNote(tab.url, info.selectionText);
+		setTimeout(function(){
+				chrome.browserAction.setIcon({ 'path' : 'images/notepad24.png'});
+			}, 1000);
 	}
 }
 

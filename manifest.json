@@ -1,13 +1,14 @@
 {
   "name": "LinkedNotes",
-  "version": "0.6",
+  "version": "0.8",
   "description": "__MSG_extDescription__",
   "default_locale": "en",
   "background_page": "background.html",
   "permissions": [
     "contextMenus",    
     "tabs",
-    "unlimited_storage"
+    "unlimited_storage",
+	"https://www.google.com/bookmarks/*"
   ],
   "icons": {
     "16": "images/sticky_note_pin.png",

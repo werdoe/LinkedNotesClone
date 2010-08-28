@@ -1,6 +1,6 @@
 {
 "extDescription": {
-      "message": "Copy selected text to new note from context menu. Note will be linked with web address. Go to this address by double click note in list."
+      "message": "The extension adds a handy list of notes that synchronizes with Google Bookmarks. A text selected on a web-page can be saved in the notes with a context menu command. The note is saved along with the web-page address from which was excerpted."
   },
 "add_note": {
     "message": "New Note",
@@ -13,6 +13,10 @@
 "options": {
     "message": "Options",
     "description": "Button shows page with options"
+  },
+"sync": {
+    "message": "Synchronize with Google Bookmarks",
+    "description": "Button for synchronization with Google bookmarks"
   },
 "copy_to_note": {
     "message": "Copy to Note",
@@ -40,7 +44,18 @@
   },
 "menu_copy":{
 	"message": "Copy"
+	},
+"msg_need_login":{
+	"message": "You should login first"
+	},
+"msg_sync_success":{
+	"message": "Sync successfully finished"
+	},
+"msg_sync_error":{
+	"message": "Sync error"
+	},	
+"msg_sync_with_errors":{
+	"message": "Sync complete with errors"
 	}
-
 
 }

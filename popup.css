@@ -15,7 +15,7 @@ body
 	border: 1px;
 }
 
-a.add_button, a.remove_button, a.options_button
+a.add_button, a.remove_button, a.options_button, a.sync_button, a.sync_button_progress
 {
 	float: right;
 	margin: 2px;
@@ -37,6 +37,16 @@ a.remove_button
 a.options_button
 {
 	background: url(images/hammer-screwdriver.png) no-repeat 0px 0px;
+}
+
+a.sync_button
+{
+	background: url(images/arrow-circle-double.png) no-repeat 0px 0px;
+}
+
+a.sync_button_progress
+{
+	background: url(images/wait16trans.gif) no-repeat 0px 0px;
 }
 
 #LinkedNotes 

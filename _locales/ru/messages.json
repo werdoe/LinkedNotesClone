@@ -1,6 +1,6 @@
 {
 "extDescription": {
-      "message": "Копирует выделенный текст в список заметок из контекстного меню. Заметка сохраняется вместе с адресом страницы. По двойному клику на заметке откроется связанный адрес."
+      "message": "Расширение добавляет удобный список заметок, который синхронизируется с Google Bookmarks. Выделите на странице текст и сохраните в заметках командой контекстного меню. Заметка сохраняется вместе с адресом страницы."
   },
 "add_note": {
     "message": "Добавить заметку",
@@ -14,6 +14,10 @@
     "message": "Настройки",
     "description": "Button shows page with options"
   },
+"sync": {
+    "message": "Синхронизировать с Google Bookmarks",
+    "description": "Button for synchronization with Google bookmarks"
+	},
 "copy_to_note": {
     "message": "Копировать в заметки",
     "description": "Menu item thats copy selected text to notes"
@@ -40,6 +44,18 @@
   },
 "menu_copy":{
 	"message": "Копировать"
+	},
+"msg_need_login":{
+	"message": "Вы должны войти в систему"
+	},
+"msg_sync_success":{
+	"message": "Синхронизация успешно завершена"
+	},
+"msg_sync_error":{
+	"message": "Ошибка синхронизации"
+	},	
+"msg_sync_with_errors":{
+	"message": "Синронизация прошла с ошибками"
 	}
 
 }

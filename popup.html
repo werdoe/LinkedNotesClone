@@ -13,8 +13,10 @@
 <body onload="notes.FillList();" onUnload="notes.SaveState();">
 	<div id="Menu">
 		<!--<a href="javascript:void(0);" class="options_button" id="options" onclick="openOptions();"></a>-->
+		<a href="javascript:void(0);" class="sync_button" id="sync" onclick="Sync();"></a>
 		<a href="javascript:void(0);" class="remove_button" id="remove_note" onclick="notes.RemoveNote();"></a>
 		<a href="javascript:void(0);" class="add_button" id="add_note" onclick="notes.AddEmptyNote();"></a>
+		<span id="message"></span>
 	</div>
 	<div id="LinkedNotes">
  		<div id="NotesList" onselectstart="return false;"></div> 	
@@ -70,6 +72,7 @@ $().ready(function() {
 	$('textarea.note').select(positionSave);
 	document.getElementById("add_note").setAttribute("title", chrome.i18n.getMessage("add_note"));
 	document.getElementById("remove_note").setAttribute("title", chrome.i18n.getMessage("remove_note"));
+	document.getElementById("sync").setAttribute("title", chrome.i18n.getMessage("sync"));
 	$('li.add_button span').text(chrome.i18n.getMessage("add_note"));
 	$('li.remove_button span').text(chrome.i18n.getMessage("remove_note"));
 	$('li.copy span').text(chrome.i18n.getMessage("menu_copy"));
