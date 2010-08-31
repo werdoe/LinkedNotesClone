@@ -4,9 +4,13 @@
   },
 "add_note": {
     "message": "Добавить заметку",
+    "description": "Title for button adds new note"
+  },
+ "add_button": {
+    "message": "Добавить",
     "description": "Button adds new note"
   },
-"remove_note": {
+  "remove_note": {
     "message": "Удалить заметку",
     "description": "Button deletes selected note"
   },
@@ -14,13 +18,21 @@
     "message": "Настройки",
     "description": "Button shows page with options"
   },
-"sync": {
+ "sync": {
     "message": "Синхронизировать с Google Bookmarks",
-    "description": "Button for synchronization with Google bookmarks"
-	},
+    "description": "Title for button for synchronization with Google bookmarks"
+  },
+"sync_button": {
+    "message": "Синхр",
+    "description": "Button for synchronization"
+  },
 "copy_to_note": {
     "message": "Копировать в заметки",
     "description": "Menu item thats copy selected text to notes"
+  },
+"quick_search": {
+    "message": "Быстрый поиск",
+    "description": "Text for blank search input"
   },
 "title_date": {
     "message": "Редактировалась: $date$",

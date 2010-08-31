@@ -5,7 +5,8 @@
 var bgPage = chrome.extension.getBackgroundPage();
 var DEL_MARK = "#del#";
 var BLANK_URL = "about:blank";
-var logging = false;
+var logging = true;
+
 function Note(id){
     this.id = id;
     var newArray = id.split(';');
@@ -51,11 +52,23 @@ function Note(id){
     this.Item = function(){
         return '<div title="' + this.title + '" class="note" id="' + this.id + '" ondblclick="notes.SelectNoteAndGo(this.id);" onclick="notes.SelectNote(this.id);">' + this.ItemContent() + '</div>';
     };
+    this.Find = function(vals){
+        for (var i = 0; i < vals.length; i += 1) {
+            if (this.text.indexOf(vals[i]) === -1 && this.url.indexOf(vals[i]) === -1) {
+                return false;
+            }
+        }
+        return true;
+    };
 }
 
 function List(){
-    this.currentNote = {};
+    var l = this;
+	this.currentNote = {};
+	this.searchString = "";
+	this.timeoutForSearch = null;
     this.currentId = bgPage.getItem("selected");
+	
     this.FillList = function(){
         $("#NotesList").empty();
         var allKeys = bgPage.getAllKeys();
@@ -94,14 +107,15 @@ function List(){
     };
 	this.ShowMessage = function(text, color)
 	{
-		$("span#message").css("display", "none");
+		$("div.message").css("display", "none");
+		$("div.message").css("top", "2px")
 		if (color)
-			$("span#message").css("color", color);
-		$("span#message").text(text);
-		$("span#message").fadeIn('fast', function(){
+			$("div.message").css("color", color);
+		$("div.message").text(text);
+		$("div.message").fadeIn('fast', function(){
 			setTimeout(function(){
-				$("span#message").fadeOut('slow', function(){
-					$("span#message").text('');
+				$("div.message").fadeOut('slow', function(){
+					$("div.message").text('');
 				});
 			}, 4000);
 		});
@@ -193,6 +207,42 @@ function List(){
     };
     this.SaveState = function(){
         bgPage.setItem("selected", this.currentId);
+    };
+    this.BindSearcher = function(input_sel){
+        var objInput = $(input_sel);
+        if (objInput) {
+            objInput.bind("keyup", this.CheckResults);
+        }
+    };
+    this.StartSearch = function(){
+        var vals = this.searchString.toLowerCase().split(' ');
+        var allKeys = bgPage.getAllKeys();
+        for (var i = 0; i < allKeys.length; i++) {
+            if (allKeys[i].indexOf(';') != -1) {
+                var note = new Note(allKeys[i]);
+                if (note.text == DEL_MARK) {
+                    continue;
+                }
+                var el = document.getElementById(note.id);
+                if (el != null && el.tagName.toLowerCase() == "div") {
+                    if (this.searchString == "" || note.Find(vals)) {
+                        el.style.display = '';
+                    }
+                    else {
+                        el.style.display = 'none';
+                    }
+                    
+                }
+            }
+        }
+    };
+    
+    this.CheckResults = function(){
+        l.searchString = $(this).val();
+        window.clearTimeout(l.timeoutForSearch);
+        l.timeoutForSearch = window.setTimeout(function(){
+            l.StartSearch();
+        }, 110);
     };
 };
 
@@ -505,8 +555,8 @@ function GoogleBookmarks(){
 gbm = new GoogleBookmarks();
 
 function Sync(){
-    $("a#sync").addClass("sync_button_progress");
-    $("a#sync").removeClass("sync_button");
+    $("a#sync span").addClass("sync_button_progress");
+    $("a#sync span").removeClass("sync_button");
     if (gbm.request == null) {
         gbm.LoadBookmarks(SyncNotes);
     }
@@ -629,6 +679,6 @@ function SyncNotes(){
 		notes.ShowMessage(chrome.i18n.getMessage("msg_sync_error"), 'red');
 	}
     gbm.Clear();
-    $("a#sync").removeClass("sync_button_progress");
-    $("a#sync").addClass("sync_button");
+    $("a#sync span").removeClass("sync_button_progress");
+    $("a#sync span").addClass("sync_button");
 }

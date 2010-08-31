@@ -1,7 +1,8 @@
 body 
 {
 	dir: __MSG_@@bidi_dir__;
-	padding: 2px;
+	padding-left: 2px;
+	padding-right: 2px;
 	min-width: 90px;
 	font-family: "Helvetica", "Arial", sans-serif;
 	font-size: 80%;
@@ -10,43 +11,79 @@ body
 
 #Menu 
 {
-	height: 20px;
+	height: 22px;
 	width: 300px;
 	border: 1px;
+	margin-bottom: 3px;
 }
 
-a.add_button, a.remove_button, a.options_button, a.sync_button, a.sync_button_progress
+#quick_search
 {
-	float: right;
-	margin: 2px;
-	height: 16px;
-	width: 16px;
+	border: 1px solid;
+	border-color: #d6d6d6;
+	font: -webkit-small-control;
+	border-bottom-left-radius: 2px 2px;
+	border-bottom-right-radius: 2px 2px;
+	border-top-left-radius: 2px 2px;
+	border-top-right-radius: 2px 2px;
+	width: 140px;	
+}
+
+input#quick_search:focus 
+{
+	outline: 0px solid #3366cc;
+} 
+a.btn
+{
+	display: inline-block;
+	color:#000;
+	height:18px;
+	line-height:18px;
+	margin-bottom:2px;
+	text-decoration:none;
+	padding-left: 2px;
+	padding-right: 2px;
+	border-radius: 5px 5px;
+	border: 1px solid;
+	border-color: #d6d6d6;
+ 	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.8)), to(rgba(255,255,255,0)));
+ 	background-color: rgba(220, 220, 220, 0.496094);
+}
+a:hover.btn
+{
+	background-color: rgba(224, 241, 255, 0.496094);	
+}
+
+span.add_button, span.remove_button, span.options_button, span.sync_button, span.sync_button_progress
+{
+	text-indent:18px;
+	display:block;
 }
 
 
-a.add_button
+span.add_button
 {
-	background: url(images/sticky_note_plus.png) no-repeat 0px 0px;
+	background: url(images/sticky_note_plus.png) no-repeat 0px 1px;
 }
 
-a.remove_button
+span.remove_button
 {
-	background: url(images/sticky_note_minus.png) no-repeat 0px 0px;
+	background: url(images/sticky_note_minus.png) no-repeat 0px 1px;
 }
 
-a.options_button
+span.options_button
 {
-	background: url(images/hammer-screwdriver.png) no-repeat 0px 0px;
+	background: url(images/hammer-screwdriver.png) no-repeat 0px 1px;
 }
 
-a.sync_button
+span.sync_button
 {
-	background: url(images/arrow-circle-double.png) no-repeat 0px 0px;
+	background: url(images/arrow-circle-double.png) no-repeat 0px 1px;
 }
 
-a.sync_button_progress
+span.sync_button_progress
 {
-	background: url(images/wait16trans.gif) no-repeat 0px 0px;
+	background: url(images/arrow-circle-anim.gif) no-repeat 0px 1px;
 }
 
 #LinkedNotes 
@@ -87,8 +124,14 @@ div.note
 	margin: -1px 0px;
 }
 
+div.note:hover
+{
+	border-color: #D1DDFF;
+	background-color: rgba(224, 241, 255, 0.496094);
+	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.8)), to(rgba(255,255,255,0)));
+}
 
-div.highlight
+div.highlight, div.highlight:hover
 {
 	border-color: #3366cc;
  	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.8)), to(rgba(255,255,255,0)));
@@ -145,4 +188,23 @@ span.simple
 span.linked
 {
 	background: url(images/sticky_note_arrow.png) no-repeat 0px 0px;
+}
+
+div.message
+{
+	display: none;
+	position: absolute;
+	top: 30; 
+	left: 0;
+	z-index: 10;
+	background:#ffc;
+	padding:5px;
+	border:1px solid;
+	text-align:center;
+	font-weight:bold;
+	width:300px;
+	border-color: #D1DDFF;
+	background-color: rgba(224, 241, 255, 0.9);
+	border-radius: 5px;
+
 }

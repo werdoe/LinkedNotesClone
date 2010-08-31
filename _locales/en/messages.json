@@ -3,11 +3,15 @@
       "message": "The extension adds a handy list of notes that synchronizes with Google Bookmarks. A text selected on a web-page can be saved in the notes with a context menu command. The note is saved along with the web-page address from which was excerpted."
   },
 "add_note": {
-    "message": "New Note",
+    "message": "Add new note",
+    "description": "Title for button adds new note"
+  },
+ "add_button": {
+    "message": "Add",
     "description": "Button adds new note"
   },
 "remove_note": {
-    "message": "Delete Note",
+    "message": "Delete note",
     "description": "Button deletes selected note"
   },
 "options": {
@@ -16,11 +20,19 @@
   },
 "sync": {
     "message": "Synchronize with Google Bookmarks",
-    "description": "Button for synchronization with Google bookmarks"
+    "description": "Title for button for synchronization with Google bookmarks"
+  },
+"sync_button": {
+    "message": "Sync",
+    "description": "Button for synchronization"
   },
 "copy_to_note": {
     "message": "Copy to Note",
     "description": "Menu item thats copy selected text to notes"
+  },
+ "quick_search": {
+    "message": "Quick search",
+    "description": "Text for blank search input"
   },
 "title_date": {
     "message": "Last modified: $date$",
