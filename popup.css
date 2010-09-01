@@ -17,6 +17,28 @@ body
 	margin-bottom: 3px;
 }
 
+#column-left 
+{  
+    float:left;
+    width:auto;
+	height: auto;
+}
+
+#column-right 
+{
+   float:right;
+   width:auto;
+   height: auto;
+}
+
+#column-centry
+{
+   width:auto;
+   height: auto;
+   float:left;
+}
+
+
 #quick_search
 {
 	border: 1px solid;
@@ -26,7 +48,9 @@ body
 	border-bottom-right-radius: 2px 2px;
 	border-top-left-radius: 2px 2px;
 	border-top-right-radius: 2px 2px;
-	width: 140px;	
+	margin-top: 0px;
+	margin-left: 2px;
+	width: 100%;
 }
 
 input#quick_search:focus 
@@ -124,11 +148,31 @@ div.note
 	margin: -1px 0px;
 }
 
+div.note .delete
+{
+  width: 16px;
+  height: 16px;
+  background: transparent url(images/cross-button-bw.png) no-repeat center center;
+  position: absolute;
+  top: 2px;
+  right: 6px;
+  opacity: 0;
+}
+
+div.note:hover .delete 
+{
+  opacity: 0.7;
+}
+
+div.note:hover .delete:hover
+{
+  opacity: 1.0;
+  background-image: url(images/cross-button.png);
+}
+
 div.note:hover
 {
-	border-color: #D1DDFF;
-	background-color: rgba(224, 241, 255, 0.496094);
-	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.8)), to(rgba(255,255,255,0)));
+	border-color: #3366cc;
 }
 
 div.highlight, div.highlight:hover

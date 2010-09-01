@@ -14,9 +14,9 @@
     </head>
     <body onload="notes.FillList();" onUnload="notes.SaveState();">
         <div id="Menu">
-			<a href="javascript:void(0);" class="btn" onclick="notes.AddEmptyNote();" id="add_note"><span class="add_button"></span></a>
-            <input type="text" placeholder="" spellcheck="false" name="search" id="quick_search">
-            <a href="javascript:void(0);" class="btn" onclick="Sync();" id="sync"><span class="sync_button"></span></a>
+        	<div id="column-left"><a href="javascript:void(0);" class="btn" onclick="notes.AddEmptyNote();" id="add_note"><span class="add_button"></span></a></div>
+            <div id="column-right"><a href="javascript:void(0);" class="btn" onclick="Sync();" id="sync"><span class="sync_button"></span></a></div>
+            <div id="column-centry"><input type="text" placeholder="" spellcheck="false" name="search" id="quick_search"></div>
         </div>
         <div id="LinkedNotes">
             <div id="NotesList" onselectstart="return false;">
@@ -30,16 +30,6 @@
             <ul>
                 <li class="copy" id="copy">
                     <img alt="" src="images/document-copy.png" /><span>Copy</span>
-                </li>
-            </ul>
-        </div>
-        <div class="contextMenu" id="myMenu2">
-            <ul>
-                <li class="add_button" id="add">
-                    <img alt="" src="images/sticky_note_plus.png" /><span>Add</span>
-                </li>
-                <li class="remove_button" id="remove">
-                    <img alt="" src="images/sticky_note_minus.png" /><span>Remove</span>
                 </li>
             </ul>
         </div>
@@ -72,16 +62,6 @@
                         }
                     }
                 });
-                $('#NotesList').contextMenu('myMenu2', {
-                    bindings: {
-                        'add': function(t){
-                            notes.AddEmptyNote();
-                        },
-                        'remove': function(t){
-                            notes.RemoveNote();
-                        }
-                    }
-                });
                 $('textarea.note').select(positionSave);
                 $("a#add_note").attr("title", chrome.i18n.getMessage("add_note"));
 				$("input#quick_search").attr("placeholder", chrome.i18n.getMessage("quick_search"));
@@ -90,10 +70,8 @@
                 $("a#add_note span").append(chrome.i18n.getMessage("add_button"));
                 $("a#remove_note span").append(chrome.i18n.getMessage("remove_note"));
                 $("a#sync span").append(chrome.i18n.getMessage("sync_button"));
-                
-                $('li.add_button span').text(chrome.i18n.getMessage("add_note"));
-                $('li.remove_button span').text(chrome.i18n.getMessage("remove_note"));
                 $('li.copy span').text(chrome.i18n.getMessage("menu_copy"));
+				$("#column-centry").width($("#Menu").width() - $("#column-left").width() - $("#column-right").width() - 4);
             });
         </script>
     </body>

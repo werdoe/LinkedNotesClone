@@ -47,10 +47,12 @@ function Note(id){
         return escaped;
     };
     this.ItemContent = function(){
-        return '<span class="' + this.icon + '">' + this.Html(50) + '</span>';
+        return '<span class="' + this.icon + '">' + this.Html(50) + '</span><div class="delete" onclick="notes.RemoveNote($(this).parent().attr(\'id\'))"></div>';
     };
     this.Item = function(){
-        return '<div title="' + this.title + '" class="note" id="' + this.id + '" ondblclick="notes.SelectNoteAndGo(this.id);" onclick="notes.SelectNote(this.id);">' + this.ItemContent() + '</div>';
+        return '<div title="' + this.title + '" class="note" id="' + this.id 
+		+ '" ondblclick="notes.SelectNoteAndGo(this.id);" onclick="notes.SelectNote(this.id);">' 
+		+ this.ItemContent() + '</div>';
     };
     this.Find = function(vals){
         for (var i = 0; i < vals.length; i += 1) {
@@ -67,6 +69,7 @@ function List(){
 	this.currentNote = {};
 	this.searchString = "";
 	this.timeoutForSearch = null;
+	this.inputSearcher = "";
     this.currentId = bgPage.getItem("selected");
 	
     this.FillList = function(){
@@ -121,18 +124,20 @@ function List(){
 		});
 	};
     this.SelectNote = function(id, force){
-        $("div.highlight").removeClass("highlight");
-        $("div[id='" + id + "']").addClass("highlight");
-        if (this.currentId != id) {
-            bgPage.setItem("selection_start", '0');
-            bgPage.setItem("selection_end", '0');
-			bgPage.setItem("selection_scroll", '0');
-        };
-        this.currentId = id;
-        if (id != this.currentNote.id || force) {
-            this.currentNote = new Note(id);
+        if ($("div[id='" + id + "']").length) {
+            $("div.highlight").removeClass("highlight");
+            $("div[id='" + id + "']").addClass("highlight");
+            if (this.currentId != id) {
+                bgPage.setItem("selection_start", '0');
+                bgPage.setItem("selection_end", '0');
+                bgPage.setItem("selection_scroll", '0');
+            };
+            this.currentId = id;
+            if (id != this.currentNote.id || force) {
+                this.currentNote = new Note(id);
+            }
+            this.FillEdit(this.currentNote);  
         }
-        this.FillEdit(this.currentNote);
     };
     this.FillEdit = function(note){
         $("textarea.note").empty();
@@ -158,8 +163,18 @@ function List(){
         var el = document.getElementById(this.currentId);
         el.scrollIntoView(true);
     };
-    this.RemoveNote = function(){
-        var next = $("div.highlight + div.note").attr("id");
+    this.RemoveNote = function(id){
+        if (id && id != $("div.highlight").attr("id"))
+		{
+			var el = document.getElementById(id);
+            if (el != null && el.tagName.toLowerCase() == "div") {
+				$(el).remove();
+			}
+			bgPage.setItem(id, DEL_MARK);
+			return;
+		}
+		
+		var next = $("div.highlight + div.note").attr("id");
         if (this.currentId != "") {
             $("textarea.note").text("");
             $("div.highlight").remove();
@@ -194,7 +209,6 @@ function List(){
         var url = unescape(newArray[1]);
         var note = object.value;
 		bgPage.setItem(object.id, DEL_MARK);
-        //bgPage.removeItem(object.id);
         var newId = bgPage.addNote(url, note);
         this.currentNote = new Note(newId);
         $("textarea.note").attr("id", newId);
@@ -211,7 +225,8 @@ function List(){
     this.BindSearcher = function(input_sel){
         var objInput = $(input_sel);
         if (objInput) {
-            objInput.bind("keyup", this.CheckResults);
+            this.inputSearcher = input_sel;
+			objInput.bind("keyup", this.CheckResults);
         }
     };
     this.StartSearch = function(){
@@ -235,6 +250,9 @@ function List(){
                 }
             }
         }
+		var foundId = $("#NotesList div:visible").first().attr("id");
+		this.SelectNote(foundId);
+		$(this.inputSearcher).focus();
     };
     
     this.CheckResults = function(){
