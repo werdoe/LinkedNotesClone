@@ -50,9 +50,10 @@ function Note(id){
         return '<span class="' + this.icon + '">' + this.Html(50) + '</span><div class="delete" onclick="notes.RemoveNote($(this).parent().attr(\'id\'))"></div>';
     };
     this.Item = function(){
-        return '<div title="' + this.title + '" class="note" id="' + this.id 
-		+ '" ondblclick="notes.SelectNoteAndGo(this.id);" onclick="notes.SelectNote(this.id);">' 
-		+ this.ItemContent() + '</div>';
+        return '<div title="' + this.title + '" class="note" id="' + this.id +
+        '" ondblclick="notes.SelectNoteAndGo(this.id);" onclick="notes.SelectNote(this.id);">' +
+        this.ItemContent() +
+        '</div>';
     };
     this.Find = function(vals){
         for (var i = 0; i < vals.length; i += 1) {
@@ -66,15 +67,20 @@ function Note(id){
 
 function List(){
     var l = this;
-	this.currentNote = {};
-	this.searchString = "";
-	this.timeoutForSearch = null;
-	this.inputSearcher = "";
+    this.currentNote = {};
+    this.searchString = "";
+    this.timeoutForSearch = null;
+    this.inputSearcher = "";
     this.currentId = bgPage.getItem("selected");
-	
+    this.fontSize = bgPage.getItem("fontsize");
+    
     this.FillList = function(){
         $("#NotesList").empty();
-        var allKeys = bgPage.getAllKeys();
+        
+        if (this.fontSize && this.fontSize == "big") {
+            this.SwitchFontsize(this.fontSize);
+        }
+		var allKeys = bgPage.getAllKeys();
         var found = false;
         var noteExist = false;
         var nLast = 0;
@@ -85,7 +91,7 @@ function List(){
                 if (note.text == DEL_MARK) {
                     continue;
                 }
-				noteExist = true;
+                noteExist = true;
                 this.InsertNote(note);
                 nLast = i;
                 if (allKeys[i] == this.currentId) {
@@ -108,21 +114,20 @@ function List(){
     this.InsertNote = function(note){
         $("#NotesList").append(note.Item());
     };
-	this.ShowMessage = function(text, color)
-	{
-		$("div.message").css("display", "none");
-		$("div.message").css("top", "2px")
-		if (color)
-			$("div.message").css("color", color);
-		$("div.message").text(text);
-		$("div.message").fadeIn('fast', function(){
-			setTimeout(function(){
-				$("div.message").fadeOut('slow', function(){
-					$("div.message").text('');
-				});
-			}, 4000);
-		});
-	};
+    this.ShowMessage = function(text, color){
+        $("div.message").css("display", "none");
+        $("div.message").css("top", "2px")
+        if (color) 
+            $("div.message").css("color", color);
+        $("div.message").text(text);
+        $("div.message").fadeIn('fast', function(){
+            setTimeout(function(){
+                $("div.message").fadeOut('slow', function(){
+                    $("div.message").text('');
+                });
+            }, 4000);
+        });
+    };
     this.SelectNote = function(id, force){
         if ($("div[id='" + id + "']").length) {
             $("div.highlight").removeClass("highlight");
@@ -136,13 +141,13 @@ function List(){
             if (id != this.currentNote.id || force) {
                 this.currentNote = new Note(id);
             }
-            this.FillEdit(this.currentNote);  
+            this.FillEdit(this.currentNote);
         }
     };
     this.FillEdit = function(note){
         $("textarea.note").empty();
-		if(note.text != DEL_MARK)
-        	$("textarea.note").text(note.text);
+        if (note.text != DEL_MARK) 
+            $("textarea.note").text(note.text);
         $("textarea.note").attr("id", note.id);
         restoreSelection();
     };
@@ -164,17 +169,16 @@ function List(){
         el.scrollIntoView(true);
     };
     this.RemoveNote = function(id){
-        if (id && id != $("div.highlight").attr("id"))
-		{
-			var el = document.getElementById(id);
+        if (id && id != $("div.highlight").attr("id")) {
+            var el = document.getElementById(id);
             if (el != null && el.tagName.toLowerCase() == "div") {
-				$(el).remove();
-			}
-			bgPage.setItem(id, DEL_MARK);
-			return;
-		}
-		
-		var next = $("div.highlight + div.note").attr("id");
+                $(el).remove();
+            }
+            bgPage.setItem(id, DEL_MARK);
+            return;
+        }
+        
+        var next = $("div.highlight + div.note").attr("id");
         if (this.currentId != "") {
             $("textarea.note").text("");
             $("div.highlight").remove();
@@ -200,7 +204,7 @@ function List(){
     this.UpdateNote = function(object){
         bgPage.setItem("selection_start", $("textarea.note").attr("selectionStart"));
         bgPage.setItem("selection_end", $("textarea.note").attr("selectionEnd"));
-		bgPage.setItem("selection_scroll", $("textarea.note").scrollTop());
+        bgPage.setItem("selection_scroll", $("textarea.note").scrollTop());
         if (object.value == object.defaultValue) {
             return;
         }
@@ -208,7 +212,7 @@ function List(){
         var time = new Date(newArray[0]);
         var url = unescape(newArray[1]);
         var note = object.value;
-		bgPage.setItem(object.id, DEL_MARK);
+        bgPage.setItem(object.id, DEL_MARK);
         var newId = bgPage.addNote(url, note);
         this.currentNote = new Note(newId);
         $("textarea.note").attr("id", newId);
@@ -221,12 +225,13 @@ function List(){
     };
     this.SaveState = function(){
         bgPage.setItem("selected", this.currentId);
+        bgPage.setItem("fontsize", this.fontSize);
     };
     this.BindSearcher = function(input_sel){
         var objInput = $(input_sel);
         if (objInput) {
             this.inputSearcher = input_sel;
-			objInput.bind("keyup", this.CheckResults);
+            objInput.bind("keyup", this.CheckResults);
         }
     };
     this.StartSearch = function(){
@@ -250,9 +255,9 @@ function List(){
                 }
             }
         }
-		var foundId = $("#NotesList div:visible").first().attr("id");
-		this.SelectNote(foundId);
-		$(this.inputSearcher).focus();
+        var foundId = $("#NotesList div:visible").first().attr("id");
+        this.SelectNote(foundId);
+        $(this.inputSearcher).focus();
     };
     
     this.CheckResults = function(){
@@ -262,6 +267,32 @@ function List(){
             l.StartSearch();
         }, 110);
     };
+    
+    this.SwitchFontsize = function(size){
+        var s = "small";
+        if (size == undefined) {
+            if (l.fontSize == "big") {
+                l.fontSize = "small";
+            }
+            else {
+                l.fontSize = "big";
+            }
+            s = l.fontSize;
+        }
+        else {
+            s = size;
+        }
+        var cur = $("textarea.note").css("font-size");
+        console.log(cur);
+        if (s == "big") {
+            $("textarea.note").css("font-size", parseInt($("textarea.note").css("font-size")) + 3 + "px");
+            $("#myMenu1 li#font span").html("A&rarr;a");
+        }
+        else {
+            $("textarea.note").css("font-size", parseInt($("textarea.note").css("font-size")) - 3 + "px");
+            $("#myMenu1 li#font span").html("a&rarr;A");
+        }
+    }
 };
 
 var notes = new List();
@@ -275,14 +306,14 @@ function openOptions(){
 function positionSave(){
     bgPage.setItem("selection_start", $("textarea.note").attr("selectionStart"));
     bgPage.setItem("selection_end", $("textarea.note").attr("selectionEnd"));
-	bgPage.setItem("selection_scroll", $("textarea.note").scrollTop());
+    bgPage.setItem("selection_scroll", $("textarea.note").scrollTop());
 }
 
 function restoreSelection(){
     $("textarea.note").focus();
     $("textarea.note").attr("selectionStart", bgPage.getItem("selection_start"));
     $("textarea.note").attr("selectionEnd", bgPage.getItem("selection_end"));
-	 $("textarea.note").scrollTop(bgPage.getItem("selection_scroll"));
+    $("textarea.note").scrollTop(bgPage.getItem("selection_scroll"));
 }
 
 function cut(){
@@ -316,7 +347,7 @@ function GoogleBookmarks(){
         this.sig = "";
         this.error = false;
         this.bookmarks = [];
-		this.createdid = [];
+        this.createdid = [];
     };
     
     this.LoadBookmarks = function(afterLoaded){
@@ -333,7 +364,8 @@ function GoogleBookmarks(){
                 output: "rss",
                 num: "50000"
             },
-            success: function(data, textStatus){
+            success: function(data, textStatus, XMLHttpRequest){
+                console.log(XMLHttpRequest);
                 if (gbm) {
                     gbm.needLogin = false;
                     gbm.ParseBookmarks(data);
@@ -370,37 +402,36 @@ function GoogleBookmarks(){
     this.CreateBookmark = function(bm){
         if (logging) 
             console.log("Creation bookmark");
-		var collection = this.SplitBookmark(bm);
-		for(var i = 0; i < collection.length; i++)
-		{
-	        $.ajax({
-	            type: "post",
-	            url: this.url + "mark",
-	            data: {
-	                bkmk: collection[i].url,
-	                title: collection[i].title,
-	                labels: "LinkedNotes",
-	                annotation: collection[i].note,
-	                prev: '',
-	                sig: this.sig
-	            },
-	            success: function(data, textStatus){			
-					if (gbm) {
-	                    gbm.error = false;
-	                }
-	            },
-	            error: function(){
-	                if (gbm) {
-	                    gbm.error = true;
-	                }
-	                
-	                if (logging) 
-	                    console.log("Error during creation bookmark");
-	            },
-	            complete: function(){
-	            }
-	        });		
-		}
+        var collection = this.SplitBookmark(bm);
+        for (var i = 0; i < collection.length; i++) {
+            $.ajax({
+                type: "post",
+                url: this.url + "mark",
+                data: {
+                    bkmk: collection[i].url,
+                    title: collection[i].title,
+                    labels: "LinkedNotes",
+                    annotation: collection[i].note,
+                    prev: '',
+                    sig: this.sig
+                },
+                success: function(data, textStatus){
+                    if (gbm) {
+                        gbm.error = false;
+                    }
+                },
+                error: function(){
+                    if (gbm) {
+                        gbm.error = true;
+                    }
+                    
+                    if (logging) 
+                        console.log("Error during creation bookmark");
+                },
+                complete: function(){
+                }
+            });
+        }
     };
     
     this.SplitBookmark = function(bm){
@@ -427,10 +458,10 @@ function GoogleBookmarks(){
                         } 
                         catch (err) {
                             if (logging) 
-                                console.log("Error decode string");	
+                                console.log("Error decode string");
                             
                         };
-                    };
+                                            };
                     var nbm = {
                         url: bm.url + '-' + pos,
                         title: bm.title + '-' + pos,
@@ -439,14 +470,14 @@ function GoogleBookmarks(){
                     result.push(nbm);
                     encoded = encoded.slice(1897 + k);
                 }
-				if(encoded.length > 0){
-	                var nbm = {
-	                    url: bm.url + '-' + result.length,
-	                    title: bm.title + '-' + result.length,
-	                    note: decodeURIComponent(encoded)
-	                };
-	                result.push(nbm);					
-				}
+                if (encoded.length > 0) {
+                    var nbm = {
+                        url: bm.url + '-' + result.length,
+                        title: bm.title + '-' + result.length,
+                        note: decodeURIComponent(encoded)
+                    };
+                    result.push(nbm);
+                }
             }
             else {
                 result.push(bm);
@@ -464,28 +495,28 @@ function GoogleBookmarks(){
             var k = cur_bm.title.indexOf("-");
             if (k != -1) {
                 var title = cur_bm.title.substr(0, k);
-				
+                
                 if (mergedbm && mergedbm.title == title) {
-                        mergedbm.note = mergedbm.note + cur_bm.note;
-                        mergedbm.id.push(cur_bm.id[0]);
+                    mergedbm.note = mergedbm.note + cur_bm.note;
+                    mergedbm.id.push(cur_bm.id[0]);
                 }
                 else {
-                        if(mergedbm){
-							allmerged.push(mergedbm);	
-						}
-						
-                        mergedbm = {
-                            id: new Array(),
-                            title: title,
-                            url: cur_bm.url,
-                            note: cur_bm.note,
-                            timestamp: cur_bm.timestamp,
-                            TitleDate: function(){
-                                return new Date(parseInt(this.title));
-                            }
-                        }
-                        mergedbm.id.push(cur_bm.id[0]);
+                    if (mergedbm) {
+                        allmerged.push(mergedbm);
                     }
+                    
+                    mergedbm = {
+                        id: new Array(),
+                        title: title,
+                        url: cur_bm.url,
+                        note: cur_bm.note,
+                        timestamp: cur_bm.timestamp,
+                        TitleDate: function(){
+                            return new Date(parseInt(this.title));
+                        }
+                    }
+                    mergedbm.id.push(cur_bm.id[0]);
+                }
             }
             else {
                 allmerged.push(cur_bm);
@@ -496,17 +527,18 @@ function GoogleBookmarks(){
         }
         this.bookmarks = allmerged;
     };
-	
+    
     this.DeleteBookmark = function(bmid){
-		if (logging) 
+        if (logging) 
             console.log("Deleting bookmark");
-		for(var i = 0; i < bmid.length; i++){
-			var bm_id = bmid[i];
-	        $.post(this.url + "mark", {
-	            dlq: bm_id,
-	            sig: this.sig
-	        }, function(data){ }, "text");			
-		}
+        for (var i = 0; i < bmid.length; i++) {
+            var bm_id = bmid[i];
+            $.post(this.url + "mark", {
+                dlq: bm_id,
+                sig: this.sig
+            }, function(data){
+            }, "text");
+        }
     };
     
     this.ParseBookmarks = function(bookmarksXml){
@@ -515,7 +547,7 @@ function GoogleBookmarks(){
         }
         if (logging) {
             console.log(bookmarksXml);
-            console.log("Signature:" + gbm.sig + "\nAccount:" + gbm.account);
+            console.log("Signature:" + gbm.sig);
         }
         this.bookmarks = [];
         
@@ -531,17 +563,17 @@ function GoogleBookmarks(){
                     return new Date(parseInt(this.title));
                 }
             };
-			bm.id.push(bookmark.find("bkmk_id:first").text());
+            bm.id.push(bookmark.find("bkmk_id:first").text());
             bm.url = bm.url.replace("#" + bm.title, "");
             bm.url = bm.url.replace(BLANK_URL, "");
-			bm.note = bm.note.replace(/\\\\/gm,"\r");
-			bm.note = bm.note.replace(/\\n/gm,"\n");
-			bm.note = bm.note.replace(/\r/gm,"\\");
+            bm.note = bm.note.replace(/\\\\/gm, "\r");
+            bm.note = bm.note.replace(/\\n/gm, "\n");
+            bm.note = bm.note.replace(/\r/gm, "\\");
             gbm.bookmarks.push(bm);
         });
         
         this.bookmarks.sort(this.SortBookmark);
-		this.MergeBookmarks();
+        this.MergeBookmarks();
         if (logging) 
             console.log("Bookmarks parsed");
     };
@@ -549,20 +581,20 @@ function GoogleBookmarks(){
     
     this.SortBookmark = function(a, b){
         if (a.title > b.title) {
-			return 1;
-		}
-		else {
-			if (a.title == b.title) {
-				return 0;
-			}
-			else {
-				return -1;
-			}
-		}
+            return 1;
+        }
+        else {
+            if (a.title == b.title) {
+                return 0;
+            }
+            else {
+                return -1;
+            }
+        }
     };
     
     this.Login = function(){
-		notes.ShowMessage(chrome.i18n.getMessage("msg_need_login"));
+        notes.ShowMessage(chrome.i18n.getMessage("msg_need_login"));
         chrome.tabs.create({
             "url": this.url,
             "selected": true
@@ -575,17 +607,30 @@ gbm = new GoogleBookmarks();
 function Sync(){
     $("a#sync span").addClass("sync_button_progress");
     $("a#sync span").removeClass("sync_button");
-    if (gbm.request == null) {
-        gbm.LoadBookmarks(SyncNotes);
-    }
-    else {
-        if (logging) 
-            console.log("Sync in progress");
-    }
+    $.get(gbm.url + 'lookup', {
+        q: "label:LinkedNotes",
+        output: "xml"
+    }, function(data, status, XMLHttpRequest){
+        console.log(XMLHttpRequest);
+        console.log(status);
+        console.log(data);
+        if (XMLHttpRequest.responseXML == null) {
+            gbm.Login();
+        }
+        else {
+            if (gbm.request == null) {
+                gbm.LoadBookmarks(SyncNotes);
+            }
+            else {
+                if (logging) 
+                    console.log("Sync in progress");
+            }
+        }
+    });
 }
 
 function SyncNotes(){
-    if (!gbm.error) {
+    if (!gbm.error || gbm.sig == "") {
         if (logging) 
             console.log("Sync started for : " + gbm.bookmarks.length);
         var last_sync = bgPage.getItem("last_sync" + gbm.sig);
@@ -639,23 +684,21 @@ function SyncNotes(){
                     if (n.url == '') {
                         n.url = BLANK_URL;
                     }
-					if(n.text != DEL_MARK)
-					{
-	                    var time = n.modified.getTime();
-						var enote = n.text.replace(/\\/gm, "\\\\");
-						enote = enote.replace(/\n/gm,"\\n");  
-
-	                    gbm.CreateBookmark({
-	                        url: n.url + "#" + time,
-	                        title: time,
-	                        note: enote
-	                    });						
-					}
-					else
-					{
-						//remove new notes that was already deleted
-						bgPage.removeItem(n.id);
-					}
+                    if (n.text != DEL_MARK) {
+                        var time = n.modified.getTime();
+                        var enote = n.text.replace(/\\/gm, "\\\\");
+                        enote = enote.replace(/\n/gm, "\\n");
+                        
+                        gbm.CreateBookmark({
+                            url: n.url + "#" + time,
+                            title: time,
+                            note: enote
+                        });
+                    }
+                    else {
+                        //remove new notes that was already deleted
+                        bgPage.removeItem(n.id);
+                    }
                 }
                 else {
                     var found = false;
@@ -685,17 +728,19 @@ function SyncNotes(){
         }
         notes.FillList();
         bgPage.setItem("last_sync" + gbm.sig, current_sync_date.getTime());
-		if (gbm.error){
-			notes.ShowMessage(chrome.i18n.getMessage("msg_sync_with_errors"), 'red');
-		}
-		else{
-			notes.ShowMessage(chrome.i18n.getMessage("msg_sync_success"));
-		}
+        if (gbm.error) {
+            notes.ShowMessage(chrome.i18n.getMessage("msg_sync_with_errors"), 'red');
+        }
+        else {
+            notes.ShowMessage(chrome.i18n.getMessage("msg_sync_success"));
+        }
     }
-	else
-	{
-		notes.ShowMessage(chrome.i18n.getMessage("msg_sync_error"), 'red');
-	}
+    else {
+        notes.ShowMessage(chrome.i18n.getMessage("msg_sync_error"), 'red');
+        if (gbm.sig == "") {
+            gbm.Login();
+        }
+    }
     gbm.Clear();
     $("a#sync span").removeClass("sync_button_progress");
     $("a#sync span").addClass("sync_button");

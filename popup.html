@@ -1,5 +1,4 @@
 <html>
-    <title>LinkedNotes</title>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="popup.css" rel="stylesheet" type="text/css" />
@@ -28,8 +27,11 @@
         </div>
         <div class="contextMenu" id="myMenu1">
             <ul>
-                <li class="copy" id="copy">
+                <li id="copy">
                     <img alt="" src="images/document-copy.png" /><span>Copy</span>
+                </li>
+				<li id="font">
+                    <img alt="" src="images/magnifier.png" /><span>a&rarr;A</span>
                 </li>
             </ul>
         </div>
@@ -58,7 +60,10 @@
                 $('#NoteText').contextMenu('myMenu1', {
                     bindings: {
                         'copy': function(t){
-                            copy();
+							copy();
+                        },
+						'font': function(t){
+                            notes.SwitchFontsize();
                         }
                     }
                 });
