@@ -68,6 +68,8 @@
 	},	
 "msg_sync_with_errors":{
 	"message": "Синронизация прошла с ошибками"
-	}
-
+	},
+"insert_from_note": {
+	"message": "Вставить заметку"
+}
 }

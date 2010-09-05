@@ -3,67 +3,7 @@
  *	Autor: Pavel Kolmogorov
  */
 var bgPage = chrome.extension.getBackgroundPage();
-var DEL_MARK = "#del#";
-var BLANK_URL = "about:blank";
 var logging = true;
-
-function Note(id){
-    this.id = id;
-    var newArray = id.split(';');
-    this.modified = new Date(parseInt(newArray[0]));
-    this.url = unescape(newArray[1]);
-    this.title = chrome.i18n.getMessage("title_date", this.modified.toLocaleDateString() + " " + this.modified.toLocaleTimeString());
-    this.icon = "simple";
-    if (this.url.length != 0) {
-        this.title += "\n" + chrome.i18n.getMessage("title_url", this.url);
-        this.icon = "linked";
-    }
-    this.selectionStart = 0;
-    this.selectionEnd = 0;
-    this.text = bgPage.getItem(id);
-    if (this.text == null) {
-        this.text = "";
-    };
-    this.Html = function(len){
-        var escaped = this.text;
-        if (escaped != null && escaped != undefined && escaped != "") {
-            var newArray = escaped.split('\n');
-            for (var i = 0; i < newArray.length; i++) {
-                if (newArray[i].length > 0) {
-                    if (newArray[i].length > len) {
-                        escaped = newArray[i].substr(0, len);
-                    }
-                    else {
-                        escaped = newArray[i];
-                    }
-                    break;
-                }
-            }
-        }
-        var findReplace = [[/&/g, "&amp;"], [/</g, "&lt;"], [/>/g, "&gt;"], [/\"/g, "&quot;"]];
-        for (var i = 0; i < findReplace.length; i++) {
-            escaped = escaped.replace(findReplace[i][0], findReplace[i][1]);
-        }
-        return escaped;
-    };
-    this.ItemContent = function(){
-        return '<span class="' + this.icon + '">' + this.Html(50) + '</span><div class="delete" onclick="notes.RemoveNote($(this).parent().attr(\'id\'))"></div>';
-    };
-    this.Item = function(){
-        return '<div title="' + this.title + '" class="note" id="' + this.id +
-        '" ondblclick="notes.SelectNoteAndGo(this.id);" onclick="notes.SelectNote(this.id);">' +
-        this.ItemContent() +
-        '</div>';
-    };
-    this.Find = function(vals){
-        for (var i = 0; i < vals.length; i += 1) {
-            if (this.text.indexOf(vals[i]) === -1 && this.url.indexOf(vals[i]) === -1) {
-                return false;
-            }
-        }
-        return true;
-    };
-}
 
 function List(){
     var l = this;
@@ -87,8 +27,8 @@ function List(){
         allKeys.sort();
         for (var i = 0; i < allKeys.length; i++) {
             if (allKeys[i].indexOf(';') != -1) {
-                var note = new Note(allKeys[i]);
-                if (note.text == DEL_MARK) {
+                var note = new bgPage.Note(allKeys[i]);
+                if (note.text == bgPage.DEL_MARK) {
                     continue;
                 }
                 noteExist = true;
@@ -139,14 +79,14 @@ function List(){
             };
             this.currentId = id;
             if (id != this.currentNote.id || force) {
-                this.currentNote = new Note(id);
+                this.currentNote = new bgPage.Note(id);
             }
             this.FillEdit(this.currentNote);
         }
     };
     this.FillEdit = function(note){
         $("textarea.note").empty();
-        if (note.text != DEL_MARK) 
+        if (note.text != bgPage.DEL_MARK) 
             $("textarea.note").text(note.text);
         $("textarea.note").attr("id", note.id);
         restoreSelection();
@@ -162,7 +102,7 @@ function List(){
     };
     this.AddEmptyNote = function(){
         this.currentId = bgPage.createKey("");
-        this.currentNote = new Note(this.currentId);
+        this.currentNote = new bgPage.Note(this.currentId);
         this.InsertNote(this.currentNote);
         this.SelectNote(this.currentId);
         var el = document.getElementById(this.currentId);
@@ -174,7 +114,7 @@ function List(){
             if (el != null && el.tagName.toLowerCase() == "div") {
                 $(el).remove();
             }
-            bgPage.setItem(id, DEL_MARK);
+            bgPage.setItem(id, bgPage.DEL_MARK);
             return;
         }
         
@@ -182,7 +122,7 @@ function List(){
         if (this.currentId != "") {
             $("textarea.note").text("");
             $("div.highlight").remove();
-            bgPage.setItem(this.currentId, DEL_MARK);
+            bgPage.setItem(this.currentId, bgPage.DEL_MARK);
             //bgPage.removeItem(this.currentId);
         }
         if (next) {
@@ -212,9 +152,9 @@ function List(){
         var time = new Date(newArray[0]);
         var url = unescape(newArray[1]);
         var note = object.value;
-        bgPage.setItem(object.id, DEL_MARK);
+        bgPage.setItem(object.id, bgPage.DEL_MARK);
         var newId = bgPage.addNote(url, note);
-        this.currentNote = new Note(newId);
+        this.currentNote = new bgPage.Note(newId);
         $("textarea.note").attr("id", newId);
         $("div.highlight").attr("id", newId);
         $("div.highlight").empty();
@@ -239,8 +179,8 @@ function List(){
         var allKeys = bgPage.getAllKeys();
         for (var i = 0; i < allKeys.length; i++) {
             if (allKeys[i].indexOf(';') != -1) {
-                var note = new Note(allKeys[i]);
-                if (note.text == DEL_MARK) {
+                var note = new bgPage.Note(allKeys[i]);
+                if (note.text == bgPage.DEL_MARK) {
                     continue;
                 }
                 var el = document.getElementById(note.id);
@@ -286,11 +226,11 @@ function List(){
         console.log(cur);
         if (s == "big") {
             $("textarea.note").css("font-size", parseInt($("textarea.note").css("font-size")) + 3 + "px");
-            $("#myMenu1 li#font span").html("A&rarr;a");
+            $("#myMenu1 li#font span").html("A&rarr;<font style='font-variant: small-caps;'>a</font>");
         }
         else {
             $("textarea.note").css("font-size", parseInt($("textarea.note").css("font-size")) - 3 + "px");
-            $("#myMenu1 li#font span").html("a&rarr;A");
+            $("#myMenu1 li#font span").html("<font style='font-variant: small-caps;'>a</font>&rarr;A");
         }
     }
 };
@@ -565,7 +505,7 @@ function GoogleBookmarks(){
             };
             bm.id.push(bookmark.find("bkmk_id:first").text());
             bm.url = bm.url.replace("#" + bm.title, "");
-            bm.url = bm.url.replace(BLANK_URL, "");
+            bm.url = bm.url.replace(bgPage.BLANK_URL, "");
             bm.note = bm.note.replace(/\\\\/gm, "\r");
             bm.note = bm.note.replace(/\\n/gm, "\n");
             bm.note = bm.note.replace(/\r/gm, "\\");
@@ -611,9 +551,6 @@ function Sync(){
         q: "label:LinkedNotes",
         output: "xml"
     }, function(data, status, XMLHttpRequest){
-        console.log(XMLHttpRequest);
-        console.log(status);
-        console.log(data);
         if (XMLHttpRequest.responseXML == null) {
             gbm.Login();
         }
@@ -653,7 +590,7 @@ function SyncNotes(){
                     bgPage.setItem(key, gbm.bookmarks[i].note);
                 }
                 else 
-                    if (noteText == DEL_MARK) {
+                    if (noteText == bgPage.DEL_MARK) {
                         //remove note marked as deleted
                         if (logging) 
                             console.log("Remove note marked as deleted: " + key);
@@ -679,12 +616,12 @@ function SyncNotes(){
         allKeys.sort();
         for (var i = allKeys.length - 1; i >= 0; i--) {
             if (allKeys[i].indexOf(';') != -1) {
-                var n = new Note(allKeys[i]);
+                var n = new bgPage.Note(allKeys[i]);
                 if (n.modified >= last_sync_date) {
                     if (n.url == '') {
-                        n.url = BLANK_URL;
+                        n.url = bgPage.BLANK_URL;
                     }
-                    if (n.text != DEL_MARK) {
+                    if (n.text != bgPage.DEL_MARK) {
                         var time = n.modified.getTime();
                         var enote = n.text.replace(/\\/gm, "\\\\");
                         enote = enote.replace(/\n/gm, "\\n");
@@ -708,7 +645,7 @@ function SyncNotes(){
                             console.log("Check title:" + title_date.getTime() + " note modif: " + n.modified.getTime());
                         if (title_date.getTime() == n.modified.getTime()) {
                             found = true;
-                            if (n.text == DEL_MARK) {
+                            if (n.text == bgPage.DEL_MARK) {
                                 //remove note marked as deleted
                                 if (logging) 
                                     console.log("Remove note marked to del: " + gbm.bookmarks[j].note);
@@ -727,7 +664,8 @@ function SyncNotes(){
             }
         }
         notes.FillList();
-        bgPage.setItem("last_sync" + gbm.sig, current_sync_date.getTime());
+		bgPage.setItem("last_sync" + gbm.sig, current_sync_date.getTime());
+		bgPage.updateMenu();
         if (gbm.error) {
             notes.ShowMessage(chrome.i18n.getMessage("msg_sync_with_errors"), 'red');
         }

@@ -68,6 +68,8 @@
 	},	
 "msg_sync_with_errors":{
 	"message": "Sync complete with errors"
-	}
-
+	},
+"insert_from_note": {
+	"message": "Insert Note"
+}
 }
