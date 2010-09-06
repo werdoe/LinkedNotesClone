@@ -13,6 +13,7 @@ function List(){
     this.inputSearcher = "";
     this.currentId = bgPage.getItem("selected");
     this.fontSize = bgPage.getItem("fontsize");
+    this.normalFontSize;
     
     this.FillList = function(){
         $("#NotesList").empty();
@@ -210,6 +211,9 @@ function List(){
     
     this.SwitchFontsize = function(size){
         var s = "small";
+        if (l.normalFontSize == undefined){
+        	l.normalFontSize = $("textarea.note").css("font-size");
+        }
         if (size == undefined) {
             if (l.fontSize == "big") {
                 l.fontSize = "small";
@@ -222,14 +226,12 @@ function List(){
         else {
             s = size;
         }
-        var cur = $("textarea.note").css("font-size");
-        console.log(cur);
         if (s == "big") {
-            $("textarea.note").css("font-size", parseInt($("textarea.note").css("font-size")) + 3 + "px");
+            $("textarea.note").css("font-size", parseInt(l.normalFontSize) + 3 + "px");
             $("#myMenu1 li#font span").html("A&rarr;<font style='font-variant: small-caps;'>a</font>");
         }
         else {
-            $("textarea.note").css("font-size", parseInt($("textarea.note").css("font-size")) - 3 + "px");
+            $("textarea.note").css("font-size", l.normalFontSize);
             $("#myMenu1 li#font span").html("<font style='font-variant: small-caps;'>a</font>&rarr;A");
         }
     }

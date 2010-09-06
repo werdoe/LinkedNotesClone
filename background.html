@@ -56,12 +56,14 @@ function Note(id){
         '</div>';
     };
     this.Find = function(vals){
-        for (var i = 0; i < vals.length; i += 1) {
-            if (this.text.indexOf(vals[i]) === -1 && this.url.indexOf(vals[i]) === -1) {
-                return false;
+        var txt = this.text.toLowerCase();
+        var url = this.url.toLowerCase();
+        for (var i = 0; i < vals.length; i++) {
+            if (txt.indexOf(vals[i]) != -1 || url.indexOf(vals[i]) != -1) {
+                return true;
             }
         }
-        return true;
+        return false;
     };
 }
 
