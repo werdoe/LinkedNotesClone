@@ -59,7 +59,7 @@ function Note(id){
         var txt = this.text.toLowerCase();
         var url = this.url.toLowerCase();
         for (var i = 0; i < vals.length; i++) {
-            if (txt.indexOf(vals[i]) != -1 || url.indexOf(vals[i]) != -1) {
+            if (vals[i] != '' && (txt.indexOf(vals[i]) != -1 || url.indexOf(vals[i]) != -1)) {
                 return true;
             }
         }
@@ -91,7 +91,8 @@ function setItem(key, value){
 			}
 			else{
 				createSubMenu(key);
-			}		
+			}
+			chrome.tabs.getSelected(null, function(tab) { updateCount(tab);});		
 		}
     } 
     catch (e) {
@@ -262,6 +263,36 @@ function clickNote(x, tab){
     }
 }
 
+function updateCount(tab, count){
+    if (count != undefined) {
+        cnotes = count;
+    }
+    else {
+        cnotes = 0;
+        var allKeys = getAllKeys();
+        allKeys.sort();
+        for (var i = 0; i < allKeys.length; i++) {
+            if (allKeys[i].indexOf(';') != -1) {
+                var note = new Note(allKeys[i]);
+                if (note.text == DEL_MARK) {
+                    continue;
+                }
+                if (note.url.indexOf(tab.url) != -1) {
+                    cnotes++;
+                }
+            }
+        }
+    }
+	txt = "";
+	if (cnotes > 0){
+		txt += cnotes;
+	}
+	
+    chrome.browserAction.setBadgeText({
+        text: txt,
+        tabId: tab.id
+    });
+}
 
 function log(txt){
     if (logging) {
@@ -270,6 +301,13 @@ function log(txt){
 }
 
 installMenu();
+chrome.tabs.onCreated.addListener(function(tab) {
+    updateCount(tab);
+});
+
+chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab) {
+    updateCount(tab);
+});
 </script>
 </head>
 </html>
