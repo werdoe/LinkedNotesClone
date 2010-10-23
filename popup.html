@@ -14,7 +14,7 @@
     <body onload="notes.FillList();" onUnload="notes.SaveState();">
         <div id="Menu">
         	<div id="column-left"><a href="javascript:void(0);" class="btn" onclick="notes.AddEmptyNote();" id="add_note"><span class="add_button"></span></a></div>
-            <div id="column-right"><a href="javascript:void(0);" class="btn" onclick="Sync();" id="sync"><span class="sync_button"></span></a></div>
+            <div id="column-right"><a href="javascript:void(0);" class="btn" onclick="bgPage.Sync(notes);" id="sync"><span class="sync_button"></span></a></div>
             <div id="column-centry"><input type="text" placeholder="" spellcheck="false" name="search" id="quick_search"></div>
         </div>
         <div id="LinkedNotes">

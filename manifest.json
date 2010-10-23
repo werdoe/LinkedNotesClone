@@ -1,9 +1,10 @@
 {
   "name": "LinkedNotes",
-  "version": "0.12",
+  "version": "0.14",
   "description": "__MSG_extDescription__",
   "default_locale": "en",
   "background_page": "background.html",
+  "options_page": "options.html",
   "permissions": [
     "contextMenus",    
     "tabs",

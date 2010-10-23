@@ -1,0 +1,62 @@
+<html>
+  <head>
+    <title>LinkedNotes Extension Options</title>
+    <link rel="stylesheet" type="text/css" href="options.css">
+	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript" src="options.js"></script>
+  </head>
+  <body onload="displayVersionNumber();">
+    <div id="content">
+      <h1>
+        <div style="width:30%;float:left;"><img src='images/notepad48.png' alt="LinkedNotes"></div><div style="width:auto;">LinkedNotes v<span id="version_number"></span><br><span id="options_header">Chrome Extension Options</span></div>
+      </h1>
+    <div class="option_row">
+        <div class="option_picker">
+          <input id="autosync" type="checkbox">
+        </div>
+		<div class="option_name" id="autosync_label">Enable autosync</div>
+    </div>
+<br>
+<!--
+       <div class="option_row">
+        <div class="option_name">Font for list:</div>
+        <div class="option_picker">
+          <select id="listFont"></select><select id="listFontSize"></select>
+        </div>
+		<div class="option_sample" id="listSample">Sample text</div>
+      </div>
+     <div class="option_row">
+        <div class="option_name">Font for note:</div>
+        <div class="option_picker">
+          <select id="noteFont"></select><select id="noteFontSize"></select>
+        </div>
+		<div class="option_sample" id="noteSample">Sample text</div>
+      </div>
+	  
+      <div class="buttons">
+        <button id="saveBtn">Save</button>
+        <button onclick="history.go(0)">Reset</button>
+        <span id="saveStatus" style="display:none">Options saved.</span>
+      </div>
+-->
+    </div>
+
+    <div class="footer"><a href="http://linkednotes.googlecode.com/"><span id="homepage">LinkedNotes Homepage</span></a></div>
+    <div class="footer" id="author">Author: Pavel Kolmogorov</div>
+	      <script type="text/javascript">
+            $().ready(function(){
+                $("#listFont").fontSelector({"onChange": function(){$("#listSample").css("font-family", this.value)}});
+				$("#noteFont").fontSelector({"onChange": function(){$("#noteSample").css("font-family", this.value)}});
+				$("#listFontSize").fontSizeSelector({"onChange": function(){$("#listSample").css("font-size", this.value)}});
+				$("#noteFontSize").fontSizeSelector({"onChange": function(){$("#noteSample").css("font-size", this.value)}});
+				if (bgPage.getItem("autosync") == "yes"){$("#autosync").attr('checked', 'checked');}
+				$("#autosync").click(AutoSyncCheckboxToggle);
+				$('#options_header').text(chrome.i18n.getMessage("options_header"));
+				$('title').text(chrome.i18n.getMessage("options_header"));
+				$('#autosync_label').text(chrome.i18n.getMessage("autosync_label"));
+				$('#homepage').text(chrome.i18n.getMessage("homepage"));
+				$('#author').text(chrome.i18n.getMessage("author"));
+            });
+        </script>
+  </body>
+</html>

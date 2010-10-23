@@ -71,5 +71,17 @@
 	},
 "insert_from_note": {
 	"message": "Insert Note"
-}
+	},
+"options_header": {
+	"message": "Extension Options"
+	},
+"autosync_label": {
+	"message": "Enable autosync"
+	},
+"homepage": {
+	"message": "LinkedNotes Homepage"
+	},
+"author": {
+	"message": "Author: Pavel Kolmogorov"
+	}
 }

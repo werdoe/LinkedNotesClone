@@ -71,5 +71,17 @@
 	},
 "insert_from_note": {
 	"message": "Вставить заметку"
-}
+	},
+"options_header": {
+	"message": "Настройки расширения"
+	},
+"autosync_label": {
+	"message": "Автоматическая синхронизация"
+	},
+"homepage": {
+	"message": "Домашняя страница LinkedNotes"
+	},
+"author": {
+	"message": "Автор: Колмогоров Павел"
+	}
 }
