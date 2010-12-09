@@ -92,6 +92,9 @@ function List(){
         $("textarea.note").attr("id", note.id);
         restoreSelection();
     };
+	this.Filter = function(){
+		chrome.tabs.getSelected(null, function(tab) { $("input#quick_search").attr("value", tab.url); l.searchString = tab.url; l.StartSearch();});
+    };
     this.SelectNoteAndGo = function(id){
         this.SelectNote(id);
         if (this.currentNote.url.length != 0) {

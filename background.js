@@ -299,7 +299,13 @@ function GoogleBookmarks(){
                 }
             };
             bm.id.push(bookmark.find("bkmk_id:first").text());
-            bm.url = bm.url.replace("#" + bm.title, "");
+            bm.url = bm.url.replace(bm.title, "");
+			if(bm.url.substring(bm.url.length-1) == "3"){
+				bm.url = bm.url.substring(0, bm.url.length-3);
+			}
+			else{
+				bm.url = bm.url.substring(0, bm.url.length-1);
+			}
             bm.url = bm.url.replace(BLANK_URL, "");
             bm.note = bm.note.replace(/\\\\/gm, "\r");
             bm.note = bm.note.replace(/\\n/gm, "\n");
@@ -628,6 +634,7 @@ function onCopyToNote(info, tab){
                 'path': 'images/notepad24.png'
             });
         }, 1000);
+		AutoSync();
     }
 }
 
@@ -690,7 +697,7 @@ function createSubMenu(noteId)
 function removeSubMenu(noteId)
 {
     for (var i = 0; i < mapMenu.length; i++) {
-		if (mapMenu[i][0] == noteId) {
+		if (mapMenu[i][0] == noteId && mapMenu[i][1] != -1) {
 			chrome.contextMenus.remove(mapMenu[i][1]);
 			mapMenu[i][0] = "";
 			mapMenu[i][1] = -1;
