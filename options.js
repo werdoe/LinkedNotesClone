@@ -60,3 +60,12 @@ function AutoSyncCheckboxToggle(){
 	}
 }
 
+function InjectionCheckboxToggle(){
+	var value = $("#injection").attr('checked')?1:0;
+	if (value == 1){
+		bgPage.setItem("injection","yes");
+	}
+	else{
+		bgPage.removeItem("injection");
+	}
+}

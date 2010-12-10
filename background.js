@@ -628,7 +628,14 @@ function onCopyToNote(info, tab){
         chrome.browserAction.setIcon({
             'path': 'images/notepad24hl.png'
         });
-        addNote(tab.url, info.selectionText);
+		var inject = getItem("injection");
+	 	if (inject == "yes"){
+			chrome.tabs.executeScript(null, {file: "injection.js"});
+	 	}
+		else{
+			addNote(tab.url, info.selectionText);	
+		}
+		
         setTimeout(function(){
             chrome.browserAction.setIcon({
                 'path': 'images/notepad24.png'
@@ -772,6 +779,14 @@ chrome.tabs.onCreated.addListener(function(tab) {
 
 chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab) {
     updateCount(tab);
+});
+
+chrome.extension.onConnect.addListener(function(port){
+    var tab = port.sender.tab;
+    port.onMessage.addListener(function(info){
+		var text = (info.linksText.length > 0) ? info.selectionText + '\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n' + info.linksText : info.selectionText;
+        addNote(tab.url, text);
+    });
 });
 
 setInterval(AutoSync, 600000);

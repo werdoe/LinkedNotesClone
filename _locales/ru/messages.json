@@ -18,9 +18,13 @@
     "message": "Настройки",
     "description": "Button shows page with options"
   },
- "sync": {
+"sync": {
     "message": "Синхронизировать с Google Bookmarks",
     "description": "Title for button for synchronization with Google bookmarks"
+  },
+"filter": {
+    "message": "Показать заметки для текущей страницы",
+    "description": "Title for filter button"
   },
 "sync_button": {
     "message": "Синхр",
@@ -77,6 +81,9 @@
 	},
 "autosync_label": {
 	"message": "Автоматическая синхронизация"
+	},
+"injection_label": {
+	"message": "Сохранять ссылки для объектов"
 	},
 "homepage": {
 	"message": "Домашняя страница LinkedNotes"

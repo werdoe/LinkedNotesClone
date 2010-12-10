@@ -22,6 +22,10 @@
     "message": "Synchronize with Google Bookmarks",
     "description": "Title for button for synchronization with Google bookmarks"
   },
+"filter": {
+    "message": "Show notes for current page",
+    "description": "Title for filter button"
+  },
 "sync_button": {
     "message": "Sync",
     "description": "Button for synchronization"
@@ -77,6 +81,9 @@
 	},
 "autosync_label": {
 	"message": "Enable autosync"
+	},
+"injection_label": {
+	"message": "Copy links for objects"
 	},
 "homepage": {
 	"message": "LinkedNotes Homepage"
