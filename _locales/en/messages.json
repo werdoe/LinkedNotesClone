@@ -26,6 +26,10 @@
     "message": "Show notes for current page",
     "description": "Title for filter button"
   },
+"clear_filter": {
+    "message": "Clear quick search",
+    "description": "Title for filter button when quick search not empty"
+  },
 "sync_button": {
     "message": "Sync",
     "description": "Button for synchronization"

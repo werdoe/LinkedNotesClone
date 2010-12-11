@@ -9,6 +9,7 @@ var mapMenu = [];
 var DEL_MARK = "#del#";
 var BLANK_URL = "about:blank";
 var gbm = null;
+var noteTextFromSelection = '';
 
 function Note(id){
     this.id = id;
@@ -32,21 +33,33 @@ function Note(id){
         if (escaped != null && escaped != undefined && escaped != "") {
             var newArray = escaped.split('\n');
             for (var i = 0; i < newArray.length; i++) {
-                if (newArray[i].length > 0) {
-                    if (newArray[i].length > len) {
-                        escaped = newArray[i].substr(0, len);
+				var testString = '';
+				for (var n = 0; n < newArray[i].length; n++){
+					if (newArray[i].charAt(n) > ' '){
+						testString = newArray[i].substr(n);
+						break; 
+					}
+				}
+				
+                if (testString.length > 0) {
+                    if (testString.length > len) {
+                        escaped = testString.substr(0, len);
                     }
                     else {
-                        escaped = newArray[i];
+                        escaped = testString;
                     }
                     break;
                 }
             }
         }
-        var findReplace = [[/&/g, "&amp;"], [/</g, "&lt;"], [/>/g, "&gt;"], [/\"/g, "&quot;"]];
+        var findReplace = [[/&/g, "&amp;"], [/</g, "&lt;"], [/>/g, "&gt;"], [/\"/g, "&quot;"], [/ /g, "&nbsp;"], [/\n/g, "&nbsp;"]];
         for (var i = 0; i < findReplace.length; i++) {
             escaped = escaped.replace(findReplace[i][0], findReplace[i][1]);
         }
+		if (escaped.length < len){
+			escaped += '&nbsp;';
+		}
+		
         return escaped;
     };
     this.ItemContent = function(){
@@ -630,7 +643,12 @@ function onCopyToNote(info, tab){
         });
 		var inject = getItem("injection");
 	 	if (inject == "yes"){
+			noteTextFromSelection = info.selectionText;
 			chrome.tabs.executeScript(null, {file: "injection.js"});
+			if (tab.url.indexOf("chrome.google.com/extensions") != -1)
+			{
+				addNote(tab.url, info.selectionText);
+			}
 	 	}
 		else{
 			addNote(tab.url, info.selectionText);	
@@ -659,7 +677,9 @@ function installMenu(){
 function updateMenu()
 {
 	for (var i = 0; i < mapMenu.length; i++) {
-   		chrome.contextMenus.remove(mapMenu[i][1]);
+   		if (mapMenu[i][1] != -1) {
+			chrome.contextMenus.remove(mapMenu[i][1]);
+		}
 	}
 	mapMenu = [];
 	if (parentId != -1){
@@ -784,6 +804,10 @@ chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab) {
 chrome.extension.onConnect.addListener(function(port){
     var tab = port.sender.tab;
     port.onMessage.addListener(function(info){
+		if (info.selectionText.length == 0)
+		{
+			info.selectionText = noteTextFromSelection;
+		}
 		var text = (info.linksText.length > 0) ? info.selectionText + '\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n' + info.linksText : info.selectionText;
         addNote(tab.url, text);
     });

@@ -93,7 +93,15 @@ function List(){
         restoreSelection();
     };
 	this.Filter = function(){
-		chrome.tabs.getSelected(null, function(tab) { $("input#quick_search").attr("value", tab.url); l.searchString = tab.url; l.StartSearch();});
+		if($("input#quick_search").attr("value").length > 0){
+			$("input#quick_search").attr("value", "");
+			$("span.filter_button_hi").attr("class", "filter_button");
+			$("a#filter").attr("title", chrome.i18n.getMessage("filter"));
+			l.searchString = ""; l.StartSearch();
+		}
+		else {
+			chrome.tabs.getSelected(null, function(tab) { $("input#quick_search").attr("value", tab.url); l.searchString = tab.url; l.StartSearch();});	
+		}
     };
     this.SelectNoteAndGo = function(id){
         this.SelectNote(id);
@@ -179,6 +187,10 @@ function List(){
         }
     };
     this.StartSearch = function(){
+		if (this.searchString.length > 0){
+			$("span.filter_button").attr("class", "filter_button_hi");
+			$("a#filter").attr("title", chrome.i18n.getMessage("clear_filter"));
+		}
         var vals = this.searchString.toLowerCase().split(' ');
         var allKeys = bgPage.getAllKeys();
         for (var i = 0; i < allKeys.length; i++) {

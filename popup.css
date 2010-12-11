@@ -122,6 +122,13 @@ span.filter_button
 	display:block;
 }
 
+span.filter_button_hi
+{
+	background: url(images/funnel_hi.png) no-repeat 0px 1px;
+	width: 16px;
+	display:block;
+}
+
 #LinkedNotes 
 {
 	height: 558px;

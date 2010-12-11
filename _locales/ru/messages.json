@@ -26,6 +26,10 @@
     "message": "Показать заметки для текущей страницы",
     "description": "Title for filter button"
   },
+"clear_filter": {
+    "message": "Очистить быстрый поиск",
+    "description": "Title for filter button when quick search not empty"
+  },
 "sync_button": {
     "message": "Синхр",
     "description": "Button for synchronization"
