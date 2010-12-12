@@ -69,7 +69,7 @@ function getSelectedElementTags(win) {
 }
 
 var additionalInfo = {
-    "title": document.title,
+    "id": "note",
     "selectionText": window.getSelection().toString(),
     "linksText": getSelectedElementTags(window)
 };

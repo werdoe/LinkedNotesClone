@@ -250,6 +250,16 @@ function List(){
             $("#myMenu1 li#font span").html("<font style='font-variant: small-caps;'>a</font>&rarr;A");
         }
     }
+    this.ShowSyncProgress = function(show){
+        if (show) {
+            $("a#sync span").addClass("sync_button_progress");
+            $("a#sync span").removeClass("sync_button");
+        }
+        else {
+            $("a#sync span").removeClass("sync_button_progress");
+            $("a#sync span").addClass("sync_button");
+        }
+    }
 };
 
 var notes = new List();

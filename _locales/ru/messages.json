@@ -22,6 +22,10 @@
     "message": "Синхронизировать с Google Bookmarks",
     "description": "Title for button for synchronization with Google bookmarks"
   },
+"last_sync": {
+    "message": "Последняя синхронизация:",
+    "description": "Title for extension icon about time of last synchronization"
+  },
 "filter": {
     "message": "Показать заметки для текущей страницы",
     "description": "Title for filter button"

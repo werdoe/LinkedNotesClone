@@ -22,6 +22,10 @@
     "message": "Synchronize with Google Bookmarks",
     "description": "Title for button for synchronization with Google bookmarks"
   },
+"last_sync": {
+    "message": "Last Sync:",
+    "description": "Title for extension icon about time of last synchronization"
+  },
 "filter": {
     "message": "Show notes for current page",
     "description": "Title for filter button"

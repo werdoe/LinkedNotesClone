@@ -348,6 +348,10 @@ function GoogleBookmarks(){
     };
     
     this.Login = function(){
+        chrome.browserAction.setIcon({
+            'path': 'images/notepad24w.png'
+        });
+		updateTitle(null, chrome.i18n.getMessage("msg_need_login"));
 		if(this.notesList != null){
 			try {
 				this.notesList.ShowMessage(chrome.i18n.getMessage("msg_need_login"));
@@ -377,12 +381,22 @@ function AutoSync()
 function Sync(notes){
 	if(notes != undefined){
 		gbm.notesList = notes;
+	    if (gbm.notesList != null) {
+			try {
+				gbm.notesList.ShowSyncProgress(true);
+			} 
+			catch (err) {
+				log("Error during show sync progress");
+			}
+		}	
 	}
 	else{
 		gbm.notesList = null;
 	}
-    $("a#sync span").addClass("sync_button_progress");
-    $("a#sync span").removeClass("sync_button");
+    chrome.browserAction.setIcon({
+        'path': 'images/notepad24s.png'
+    });
+
     $.get(gbm.url + 'lookup', {
         q: "label:LinkedNotes",
         output: "xml"
@@ -509,22 +523,35 @@ function SyncNotes(){
 		}
         
 		setItem("last_sync" + gbm.sig, current_sync_date.getTime());
-		updateMenu();
-		if (gbm.notesList != null) {
-			try {
-				if (gbm.error) {
+		updateTitle(current_sync_date);
+		updateMenu();	
+		try {
+			if (gbm.error) {
+				chrome.browserAction.setIcon({
+                    'path': 'images/notepad24w.png'
+                });
+				if (gbm.notesList != null) {
 					gbm.notesList.ShowMessage(chrome.i18n.getMessage("msg_sync_with_errors"), 'red');
 				}
-				else {
+			}
+			else {
+                chrome.browserAction.setIcon({
+                    'path': 'images/notepad24.png'
+                });
+				if (gbm.notesList != null) {
 					gbm.notesList.ShowMessage(chrome.i18n.getMessage("msg_sync_success"));
 				}
-			} 
-			catch (err) {
-				log("Error during show message");
-			}	
-		}
+			}
+		} 
+		catch (err) {
+			log("Error during show message");
+		}	
+
     }
     else {
+        chrome.browserAction.setIcon({
+            'path': 'images/notepad24w.png'
+        });
 		if (gbm.notesList != null) {
 			try {
 				gbm.notesList.ShowMessage(chrome.i18n.getMessage("msg_sync_error"), 'red');
@@ -539,8 +566,14 @@ function SyncNotes(){
         }
     }
     gbm.Clear();
-    $("a#sync span").removeClass("sync_button_progress");
-    $("a#sync span").addClass("sync_button");
+    if (gbm.notesList != null) {
+        try {
+            gbm.notesList.ShowSyncProgress(false);
+        } 
+        catch (err) {
+            log("Error during stop show progress");
+        }
+    }
 }
 
 function removeItem(key){
@@ -658,8 +691,8 @@ function onCopyToNote(info, tab){
             chrome.browserAction.setIcon({
                 'path': 'images/notepad24.png'
             });
+			AutoSync();
         }, 1000);
-		AutoSync();
     }
 }
 
@@ -778,12 +811,27 @@ function updateCount(tab, count){
 	if (cnotes > 0){
 		txt += cnotes;
 	}
-	
+    chrome.browserAction.setBadgeBackgroundColor({
+        color: [0, 0, 255, 100],
+        tabId: tab.id
+    });
     chrome.browserAction.setBadgeText({
         text: txt,
         tabId: tab.id
     });
 }
+
+function updateTitle(date, text) {
+	var str = "LinkedNotes";
+	if (date != null) {
+		str += "\n" + chrome.i18n.getMessage("last_sync") + " " + date.toLocaleDateString() + " " + date.toLocaleTimeString(); 
+	}
+	if (text != undefined){
+		str += "\n" + text;
+	} 
+	chrome.browserAction.setTitle({title: str});
+}
+
 
 function log(txt){
     if (logging) {
@@ -795,22 +843,43 @@ installMenu();
 
 chrome.tabs.onCreated.addListener(function(tab) {
     updateCount(tab);
+	/*
+	var inject = getItem("injection");
+	if (inject == "yes") {
+		chrome.tabs.executeScript(tab.id, {
+			file: "keyhook.js",
+			allFrames: true
+		});
+	}*/
 });
 
 chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab) {
     updateCount(tab);
+    /*
+	var inject = getItem("injection");
+	if (inject == "yes") {
+		chrome.tabs.executeScript(tab.id, {
+			file: "keyhook.js",
+			allFrames: true
+		});
+	}*/
 });
 
 chrome.extension.onConnect.addListener(function(port){
     var tab = port.sender.tab;
     port.onMessage.addListener(function(info){
-		if (info.selectionText.length == 0)
-		{
-			info.selectionText = noteTextFromSelection;
+		if (info.id == 'note'){
+			if (info.selectionText.length == 0)
+			{
+				info.selectionText = noteTextFromSelection;
+			}
+			var text = (info.linksText.length > 0) ? info.selectionText + '\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n' + info.linksText : info.selectionText;
+	        addNote(tab.url, text);		
 		}
-		var text = (info.linksText.length > 0) ? info.selectionText + '\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n' + info.linksText : info.selectionText;
-        addNote(tab.url, text);
+		else if (info.id == 'key'){
+			onCopyToNote(info, tab);
+		}
     });
 });
-
+			
 setInterval(AutoSync, 600000);
