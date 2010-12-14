@@ -677,7 +677,7 @@ function onCopyToNote(info, tab){
 		var inject = getItem("injection");
 	 	if (inject == "yes"){
 			noteTextFromSelection = info.selectionText;
-			chrome.tabs.executeScript(null, {file: "injection.js"});
+			chrome.tabs.executeScript(null, {file: "injection.js", allFrames: true});
 			if (tab.url.indexOf("chrome.google.com/extensions") != -1)
 			{
 				addNote(tab.url, info.selectionText);
@@ -791,7 +791,7 @@ function updateCount(tab, count){
     if (count != undefined) {
         cnotes = count;
     }
-    else {
+    else if (tab.url != ''){
         cnotes = 0;
         var allKeys = getAllKeys();
         allKeys.sort();
@@ -874,7 +874,9 @@ chrome.extension.onConnect.addListener(function(port){
 				info.selectionText = noteTextFromSelection;
 			}
 			var text = (info.linksText.length > 0) ? info.selectionText + '\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n' + info.linksText : info.selectionText;
-	        addNote(tab.url, text);		
+			if (text.length > 0){
+				addNote(tab.url, text);	
+			}		
 		}
 		else if (info.id == 'key'){
 			onCopyToNote(info, tab);

@@ -64,8 +64,8 @@ function getSelectedElementTags(win) {
 				linksText += 'AUDIO[' + elmlist[i].src + ']\n';
 			}
 		}
-		return linksText;
     }
+	return linksText;
 }
 
 var additionalInfo = {
@@ -74,4 +74,6 @@ var additionalInfo = {
     "linksText": getSelectedElementTags(window)
 };
 
-chrome.extension.connect().postMessage(additionalInfo);
+if (additionalInfo.selectionText != ""){
+	chrome.extension.connect().postMessage(additionalInfo);	
+}
