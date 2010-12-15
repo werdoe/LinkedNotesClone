@@ -27,7 +27,10 @@
         </div>
         <div class="contextMenu" id="myMenu1">
             <ul>
-                <li id="copy">
+                <li id="link">
+                    <img alt="" src="images/globe-green.png" /><span>Open</span>
+                </li>
+				<li id="copy">
                     <img alt="" src="images/document-copy.png" /><span>Copy</span>
                 </li>
 				<li id="font">
@@ -58,12 +61,25 @@
                     }
                 });
                 $('#NoteText').contextMenu('myMenu1', {
+					onShowMenu: function(e, menu) {
+        				currentlink.SearchLink();
+						if (!currentlink.IsFound()) {
+          					$('#link', menu).remove();
+        				}
+        				return menu;
+      				},
                     bindings: {
                         'copy': function(t){
 							copy();
                         },
+						'paste': function(t){
+							paste();
+                        },
 						'font': function(t){
                             notes.SwitchFontsize();
+                        },
+						'link': function(t){
+                            currentlink.Go();
                         }
                     }
                 });
@@ -77,6 +93,7 @@
                 $("a#remove_note span").append(chrome.i18n.getMessage("remove_note"));
                 $("a#sync span").append(chrome.i18n.getMessage("sync_button"));
                 $('li.copy span').text(chrome.i18n.getMessage("menu_copy"));
+				$('li.link span').text(chrome.i18n.getMessage("menu_link"));
 				$("#column-centry").width($("#Menu").width() - $("#column-left").width() - $("#column-right").width() - 4);
             });
         </script>

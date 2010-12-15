@@ -129,7 +129,7 @@ function List(){
             bgPage.setItem(id, bgPage.DEL_MARK);
             return;
         }
-        
+   
         var next = $("div.highlight + div.note").attr("id");
         if (this.currentId != "") {
             $("textarea.note").text("");
@@ -141,7 +141,7 @@ function List(){
             this.currentId = next;
         }
         else {
-            this.currentId = $("#NotesList div:last-child").attr("id");
+            this.currentId = $("div#NotesList div.note:last").attr("id");
         }
         if (this.currentId == undefined) {
             this.currentId = "";
@@ -274,6 +274,7 @@ function positionSave(){
     bgPage.setItem("selection_start", $("textarea.note").attr("selectionStart"));
     bgPage.setItem("selection_end", $("textarea.note").attr("selectionEnd"));
     bgPage.setItem("selection_scroll", $("textarea.note").scrollTop());
+	searchCurrentLink();
 }
 
 function restoreSelection(){
@@ -282,6 +283,46 @@ function restoreSelection(){
     $("textarea.note").attr("selectionEnd", bgPage.getItem("selection_end"));
     $("textarea.note").scrollTop(bgPage.getItem("selection_scroll"));
 }
+function ContextLink(){
+	this.link = "";
+	this.SearchLink = function(){
+		this.link = "";
+		var start = $("textarea.note").attr("selectionStart");
+		var end = $("textarea.note").attr("selectionEnd");
+		var url = /(((https?)|(ftp)|(magnet)):\/\/([\-\w]+\.)+\w{2,3}(\/[%\-\w]+(\.\w{2,})?)*(([\w\-\.\?\/+@&#;`~=%!]*)(\.\w{2,})?)*\/?)/gi;
+		var url2 = /((magnet:\?xt=urn:)[\w\+%&=:#`~!;\.]*)/gi;
+		while ((m = url.exec(notes.currentNote.text)) !== null) {
+			if(m.index <= start && (m[0].length + m.index) >= end){
+				this.link = m[0];
+				break;
+			}
+		}
+		if (!this.IsFound())
+		{
+			while ((m = url2.exec(notes.currentNote.text)) !== null) {
+				if(m.index <= start && (m[0].length + m.index) >= end){
+					this.link = m[0];
+					break;
+				}
+			}
+		}
+	};
+	
+	this.IsFound = function(){
+		return this.link.length > 0;
+	}
+	
+	this.Go = function(){
+        if (this.IsFound()) {
+            chrome.tabs.create({
+                "url": this.link,
+                "selected": false
+            });
+        }
+    };
+}
+
+var currentlink = new ContextLink();
 
 function cut(){
     restoreSelection();
