@@ -274,7 +274,6 @@ function positionSave(){
     bgPage.setItem("selection_start", $("textarea.note").attr("selectionStart"));
     bgPage.setItem("selection_end", $("textarea.note").attr("selectionEnd"));
     bgPage.setItem("selection_scroll", $("textarea.note").scrollTop());
-	searchCurrentLink();
 }
 
 function restoreSelection(){
@@ -289,7 +288,7 @@ function ContextLink(){
 		this.link = "";
 		var start = $("textarea.note").attr("selectionStart");
 		var end = $("textarea.note").attr("selectionEnd");
-		var url = /(((https?)|(ftp)|(magnet)):\/\/([\-\w]+\.)+\w{2,3}(\/[%\-\w]+(\.\w{2,})?)*(([\w\-\.\?\/+@&#;`~=%!]*)(\.\w{2,})?)*\/?)/gi;
+		var url = /([a-z][a-z0-9\*\-\.]*):\/\/(?:(?:(?:[\w\.\-\+!$&'\(\)*\+,;=]|%[0-9a-f]{2})+:)*(?:[\w\.\-\+%!$&'\(\)*\+,;=]|%[0-9a-f]{2})+@)?(?:(?:[a-z0-9\-\.]|%[0-9a-f]{2})+|(?:\[(?:[0-9a-f]{0,4}:)*(?:[0-9a-f]{0,4})\]))(?::[0-9]+)?(?:[\/|\?](?:[\w#!:\.\?\+=&@!$'~*,;\/\(\)\[\-]|%[0-9a-f]{2})*)?/gi;
 		var url2 = /((magnet:\?xt=urn:)[\w\+%&=:#`~!;\.]*)/gi;
 		while ((m = url.exec(notes.currentNote.text)) !== null) {
 			if(m.index <= start && (m[0].length + m.index) >= end){
