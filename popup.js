@@ -290,6 +290,7 @@ function ContextLink(){
 		var end = $("textarea.note").attr("selectionEnd");
 		var url = /([a-z][a-z0-9\*\-\.]*):\/\/(?:(?:(?:[\w\.\-\+!$&'\(\)*\+,;=]|%[0-9a-f]{2})+:)*(?:[\w\.\-\+%!$&'\(\)*\+,;=]|%[0-9a-f]{2})+@)?(?:(?:[a-z0-9\-\.]|%[0-9a-f]{2})+|(?:\[(?:[0-9a-f]{0,4}:)*(?:[0-9a-f]{0,4})\]))(?::[0-9]+)?(?:[\/|\?](?:[\w#!:\.\?\+=&@!$'~*,;\/\(\)\[\-]|%[0-9a-f]{2})*)?/gi;
 		var url2 = /((magnet:\?xt=urn:)[\w\+%&=:#`~!;\.]*)/gi;
+		var url3 = /[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/gi;
 		while ((m = url.exec(notes.currentNote.text)) !== null) {
 			if(m.index <= start && (m[0].length + m.index) >= end){
 				this.link = m[0];
@@ -301,6 +302,16 @@ function ContextLink(){
 			while ((m = url2.exec(notes.currentNote.text)) !== null) {
 				if(m.index <= start && (m[0].length + m.index) >= end){
 					this.link = m[0];
+					break;
+				}
+			}
+		}
+		if (!this.IsFound())
+		{
+			while ((m = url3.exec(notes.currentNote.text)) !== null) {
+				if(m.index <= start && (m[0].length + m.index) >= end){
+					this.link = m[0];
+					this.link = 'mailto:' + this.link;
 					break;
 				}
 			}
