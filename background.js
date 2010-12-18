@@ -599,7 +599,7 @@ function LinksMenu(){
         var createPropertiesL = {
             "title": chrome.i18n.getMessage("copy_link_to_note"),
             "type": "normal",
-            "contexts": ["link"],
+            "contexts": ["link","page"],
             "onclick": onCopyLinkToNote
         };
 		if (this.id == -1){
@@ -738,15 +738,19 @@ function onCopyToNote(info, tab){
 }
 
 function onCopyLinkToNote(info, tab){
-    if (!info.linkUrl || info.linkUrl.length == 0) {
-        return;
+    var url = '';
+	if (info.linkUrl != undefined && info.linkUrl.length > 0) {
+        url = info.linkUrl;
     }
-    else {
+	else if (info.pageUrl != undefined && info.pageUrl.length > 0) {
+		url = info.pageUrl;
+	}
+    if (url.length > 0) {
         chrome.browserAction.setIcon({
             'path': 'images/notepad24hl.png'
         });
 		
-		addNote(tab.url, info.linkUrl);	
+		addNote(tab.url, url);	
 		
         setTimeout(function(){
             chrome.browserAction.setIcon({
