@@ -42,6 +42,10 @@
     "message": "Copy to Note",
     "description": "Menu item thats copy selected text to notes"
   },
+"copy_link_to_note": {
+    "message": "Copy link to Note",
+    "description": "Menu item thats copy selected link to notes"
+  },
  "quick_search": {
     "message": "Quick search",
     "description": "Text for blank search input"
@@ -95,6 +99,9 @@
 	},
 "injection_label": {
 	"message": "Copy links for objects"
+	},
+"linksmenu_label": {
+	"message": "Context menu for links"
 	},
 "homepage": {
 	"message": "LinkedNotes Homepage"

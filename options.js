@@ -69,3 +69,14 @@ function InjectionCheckboxToggle(){
 		bgPage.removeItem("injection");
 	}
 }
+
+function LinksMenuToggle(){
+	var value = $("#linksmenu").attr('checked')?1:0;
+	if (value == 1){
+		bgPage.setItem("linksmenu","yes");
+	}
+	else{
+		bgPage.removeItem("linksmenu");
+	}
+	bgPage.lm.Init();
+}

@@ -576,11 +576,42 @@ function SyncNotes(){
     }
 }
 
+function LinksMenu(){
+	this.id = -1;
+	this.Init = function(){
+		var enable = getItem("linksmenu");
+	 	if (enable == "yes") {
+			this.InstallMenu();
+		}
+		else {
+			this.RemoveMenu();
+		}
+	}
+	this.InstallMenu = function(){
+        var createPropertiesL = {
+            "title": chrome.i18n.getMessage("copy_link_to_note"),
+            "type": "normal",
+            "contexts": ["link"],
+            "onclick": onCopyLinkToNote
+        };
+		this.id = chrome.contextMenus.create(createPropertiesL);
+	}
+	this.RemoveMenu = function(){
+		if (this.id != -1){
+			chrome.contextMenus.remove(this.id);
+			this.id = -1;
+		}
+	}	
+}
+
+var lm = new LinksMenu();
+
 function removeItem(key){
     try {
         log("Inside removeItem:" + key);
         window.localStorage.removeItem(key);
 		removeSubMenu(key);
+		chrome.tabs.getSelected(null, function(tab) { updateCount(tab);});
     } 
     catch (e) {
         log("Error inside removeItem");
@@ -678,7 +709,7 @@ function onCopyToNote(info, tab){
 	 	if (inject == "yes"){
 			noteTextFromSelection = info.selectionText;
 			chrome.tabs.executeScript(null, {file: "injection.js", allFrames: true});
-			if (tab.url.indexOf("chrome.google.com/extensions") != -1)
+			if (tab.url.indexOf("chrome.google.com") != -1)
 			{
 				addNote(tab.url, info.selectionText);
 			}
@@ -686,6 +717,26 @@ function onCopyToNote(info, tab){
 		else{
 			addNote(tab.url, info.selectionText);	
 		}
+		
+        setTimeout(function(){
+            chrome.browserAction.setIcon({
+                'path': 'images/notepad24.png'
+            });
+			AutoSync();
+        }, 1000);
+    }
+}
+
+function onCopyLinkToNote(info, tab){
+    if (!info.linkUrl || info.linkUrl.length == 0) {
+        return;
+    }
+    else {
+        chrome.browserAction.setIcon({
+            'path': 'images/notepad24hl.png'
+        });
+		
+		addNote(tab.url, info.linkUrl);	
 		
         setTimeout(function(){
             chrome.browserAction.setIcon({
@@ -704,6 +755,7 @@ function installMenu(){
         "onclick": onCopyToNote
     };
 	chrome.contextMenus.create(createProperties);
+	lm.Init();
 	updateMenu();
 }
 

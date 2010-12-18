@@ -42,6 +42,10 @@
     "message": "Копировать в заметки",
     "description": "Menu item thats copy selected text to notes"
   },
+"copy_link_to_note": {
+    "message": "Копировать ссылку в заметки",
+    "description": "Menu item thats copy selected link to notes"
+  },
 "quick_search": {
     "message": "Быстрый поиск",
     "description": "Text for blank search input"
@@ -95,6 +99,9 @@
 	},
 "injection_label": {
 	"message": "Сохранять ссылки для объектов"
+	},
+"linksmenu_label": {
+	"message": "Контекстное меню для ссылок"
 	},
 "homepage": {
 	"message": "Домашняя страница LinkedNotes"
