@@ -602,7 +602,9 @@ function LinksMenu(){
             "contexts": ["link"],
             "onclick": onCopyLinkToNote
         };
-		this.id = chrome.contextMenus.create(createPropertiesL);
+		if (this.id == -1){
+			this.id = chrome.contextMenus.create(createPropertiesL);	
+		}
 	}
 	this.RemoveMenu = function(){
 		if (this.id != -1){
