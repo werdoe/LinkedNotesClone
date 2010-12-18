@@ -28,7 +28,7 @@ function Note(id){
     if (this.text == null) {
         this.text = "";
     };
-    this.Html = function(len){
+	this.Title = function(len){
         var escaped = this.text;
         if (escaped != null && escaped != undefined && escaped != "") {
             var newArray = escaped.split('\n');
@@ -52,6 +52,14 @@ function Note(id){
                 }
             }
         }
+		var endTitle = escaped.indexOf('|');
+		if (endTitle != -1){
+			escaped = escaped.substr(0, endTitle);
+		}
+		return escaped;	
+	};
+    this.Html = function(len){
+		var escaped = this.Title(len);
         var findReplace = [[/&/g, "&amp;"], [/</g, "&lt;"], [/>/g, "&gt;"], [/\"/g, "&quot;"], [/ /g, "&nbsp;"], [/\n/g, "&nbsp;"]];
         for (var i = 0; i < findReplace.length; i++) {
             escaped = escaped.replace(findReplace[i][0], findReplace[i][1]);
@@ -792,7 +800,7 @@ function createSubMenu(noteId)
     if (note.text == DEL_MARK) {
         return;
     }
-	var title = note.text.substr(0, 30);
+	var title = note.Title(50);
 	if(title == ""){
 		title = " ";
 	}
@@ -823,12 +831,19 @@ function clickNote(x, tab){
     for (var i = 0; i < mapMenu.length; i++) {
         if (mapMenu[i][1] == x.menuItemId) {
             var note = new Note(mapMenu[i][0]);
-			var txt = note.text.replace(/\\/gm, "\\\\");
+			var txt = note.text;
+			var endTitle = txt.indexOf('|');
+			if (endTitle != -1 && endTitle < 50){
+				var del = (txt.charAt(endTitle+1) == '\n')?2:1;
+				txt = txt.substr(endTitle+del);
+			}
+			var lengthNote = txt.length;
+			txt = txt.replace(/\\/gm, "\\\\");
             txt = txt.replace(/'/gm, "\\'");
 			txt = txt.replace(/\n/gm, "\\n");
             var code = "var focused_el = document.activeElement;" +
             "if(focused_el != null && (focused_el.tagName.toLowerCase() == 'input' || focused_el.tagName.toLowerCase() == 'textarea')){	var text = focused_el.value; var start = focused_el.selectionStart;var end = focused_el.selectionEnd;" +
-            "focused_el.value = text.substr(0, start) +'" + txt + "' + text.slice(end);	focused_el.selectionStart = start +"+ note.text.length +"; focused_el.selectionEnd = focused_el.selectionStart;}";
+            "focused_el.value = text.substr(0, start) +'" + txt + "' + text.slice(end);	focused_el.selectionStart = start +"+ lengthNote +"; focused_el.selectionEnd = focused_el.selectionStart;}";
 			log(code);
             chrome.tabs.executeScript(tab.id, {
                 "allFrames": true,
