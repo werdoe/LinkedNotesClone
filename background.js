@@ -330,6 +330,7 @@ function GoogleBookmarks(){
             bm.url = bm.url.replace(BLANK_URL, "");
             bm.note = bm.note.replace(/\\\\/gm, "\r");
             bm.note = bm.note.replace(/\\n/gm, "\n");
+            bm.note = bm.note.replace(/\\t/gm, "\t");
             bm.note = bm.note.replace(/\r/gm, "\\");
             gbm.bookmarks.push(bm);
         });
@@ -483,6 +484,7 @@ function SyncNotes(){
                         var time = n.modified.getTime();
                         var enote = n.text.replace(/\\/gm, "\\\\");
                         enote = enote.replace(/\n/gm, "\\n");
+                        enote = enote.replace(/\t/gm, "\\t");
                         
                         gbm.CreateBookmark({
                             url: n.url + "#" + time,
@@ -708,7 +710,7 @@ function createKey(url){
 }
 
 function onCopyToNote(info, tab){
-    if (!info.selectionText || info.selectionText.length == 0) {
+    if ((!info.selectionText || info.selectionText.length == 0) && info.id != 'key') {
         return;
     }
     else {
@@ -916,26 +918,17 @@ installMenu();
 
 chrome.tabs.onCreated.addListener(function(tab) {
     updateCount(tab);
-	/*
 	var inject = getItem("injection");
 	if (inject == "yes") {
 		chrome.tabs.executeScript(tab.id, {
 			file: "keyhook.js",
 			allFrames: true
 		});
-	}*/
+	}
 });
 
 chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab) {
     updateCount(tab);
-    /*
-	var inject = getItem("injection");
-	if (inject == "yes") {
-		chrome.tabs.executeScript(tab.id, {
-			file: "keyhook.js",
-			allFrames: true
-		});
-	}*/
 });
 
 chrome.extension.onConnect.addListener(function(port){
@@ -951,10 +944,14 @@ chrome.extension.onConnect.addListener(function(port){
 				addNote(tab.url, text);	
 			}		
 		}
-		else if (info.id == 'key'){
-			onCopyToNote(info, tab);
-		}
     });
 });
-			
+
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse){
+    if (request.id == 'key') {
+        console.log('key shortcut');
+		onCopyToNote(request, sender.tab);
+    }
+});
+	
 setInterval(AutoSync, 600000);

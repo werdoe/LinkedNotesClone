@@ -47,21 +47,13 @@ function decodeKeysLN(Code, IsKeyDown){
 		var additionalInfo = {
 	    "id": "key"
 		};
-		chrome.extension.connect().postMessage(additionalInfo);	
+		chrome.extension.sendRequest(additionalInfo);
 	}
 }
 
 function installHookLN(){
-    document.addEventListener('keydown', keyDownLN);
-    document.addEventListener('keyup', keyUpLN);
-    var iframes = document.getElementsByTagName("iframe");
-    var i = 0;
-    for (i = 0; i < iframes.length; i++) {
-        if (iframes[i].contentDocument != null) {
-            iframes[i].contentDocument.addEventListener('keydown', keyDownLN);
-            iframes[i].contentDocument.addEventListener('keyup', keyUpLN);
-        }
-    }
+	window.addEventListener("keydown", keyDownLN);
+	window.addEventListener("keyup", keyUpLN); 
 }
 
 installHookLN();

@@ -49,19 +49,19 @@ function getSelectedElementTags(win) {
 
 		for (var i = 0; i < elmlist.length; i++) {
 			if (elmlist[i].localName == 'a') {
-				linksText += elmlist[i].innerText + '[' + elmlist[i].href + ']\n';
+				linksText += elmlist[i].innerText + '[' + elmlist[i].href + ' ]\n';
 			}
 			else if(elmlist[i].localName == 'img'){
-				linksText += elmlist[i].alt + '[' + elmlist[i].src + ']\n';
+				linksText += elmlist[i].alt + '[' + elmlist[i].src + ' ]\n';
 			}
 			else if(elmlist[i].localName == 'embed'){
-				linksText += elmlist[i].name + '[' + elmlist[i].src + ']\n';
+				linksText += elmlist[i].name + '[' + elmlist[i].src + ' ]\n';
 			}
 			else if(elmlist[i].localName == 'video'){
-				linksText += 'VIDEO[' + elmlist[i].src + ']\n';
+				linksText += 'VIDEO[' + elmlist[i].src + ' ]\n';
 			}
 			else if(elmlist[i].localName == 'source' || elmlist[i].localName == 'audio'){
-				linksText += 'AUDIO[' + elmlist[i].src + ']\n';
+				linksText += 'AUDIO[' + elmlist[i].src + ' ]\n';
 			}
 		}
     }
