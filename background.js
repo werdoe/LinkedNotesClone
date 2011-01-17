@@ -691,6 +691,16 @@ function getAllKeys(){
     return list;
 }
 
+function resetSyncDates(){
+	log("resetSyncDates()");
+	var allKeys = getAllKeys();
+    for (var i = 0; i < allKeys.length; i++) {
+		if (allKeys[i].substring(0, 9) == 'last_sync'){
+			window.localStorage.removeItem(allKeys[i]);
+		}
+	}
+}
+
 function addNote(url, text, date){
     var key = null;
     if (date) {

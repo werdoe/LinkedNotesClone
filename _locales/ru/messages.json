@@ -103,6 +103,12 @@
 "linksmenu_label": {
 	"message": "Контекстное меню для ссылок"
 	},
+"resetsyncdate_button": {
+	"message": "Сбросить время последней синхронизации"
+	},
+"resetsyncdate_label": {
+	"message": "Следующая синхронизация объединит локальные заметки и заметки на сервере"
+	},
 "homepage": {
 	"message": "Домашняя страница LinkedNotes"
 	},

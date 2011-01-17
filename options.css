@@ -14,21 +14,29 @@ body
 	margin:40px auto 20px;
 	padding:12px;
 	width:500px;
-	-webkit-border-radius:12px
+	-webkit-border-radius:12px;
+	overflow:auto;
 }
 
-h1
+#header
 {
 	color:#333333;
 	font-size:1.5em;
+	font-weight:bold;
 	margin:0.7em 0 0;
-	text-align:center
+	align:center;
 }
 
 h3
 {
 	font-size:1em;
-	margin:0.7em 0 0.5em
+	margin:0.7em 0 0.5em;
+}
+
+img 
+{
+	float:left;
+	margin:0 1em 0 1.4em;
 }
 
 .option_row
@@ -42,7 +50,6 @@ h3
 	float:left;
 	font-weight:bold;
 	margin-top:3px;
-	width:30em
 }
 
 .option_picker

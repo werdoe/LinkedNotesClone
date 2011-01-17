@@ -7,9 +7,7 @@
   </head>
   <body onload="displayVersionNumber();">
     <div id="content">
-      <h1>
-        <div style="width:30%;float:left;"><img src='images/notepad48.png' alt="LinkedNotes"></div><div style="width:auto;">LinkedNotes v<span id="version_number"></span><br><span id="options_header">Chrome Extension Options</span></div>
-      </h1>
+    <div id="header"><img src='images/notepad48.png' alt="LinkedNotes"> LinkedNotes v<span id="version_number"></span><br><span id="options_header">Chrome Extension Options</span></div>
     <div class="option_row">
         <div class="option_picker">
           <input id="autosync" type="checkbox">
@@ -27,6 +25,10 @@
           <input id="linksmenu" type="checkbox">
         </div>
 		<div class="option_name" id="linksmenu_label">Context menu for links</div>
+    </div>
+	<div class="option_row">
+       <input id="resetsyncdate" type="button" class="option_picker" value="Reset last synchronization date">
+		<div class="option_name" id="resetsyncdate_label">Notes from server will be merged with local notes during next sync</div>
     </div>
 <br>
 <!--
@@ -73,8 +75,12 @@
 				$("#injection").click(InjectionCheckboxToggle);
 				$('#injection_label').text(chrome.i18n.getMessage("injection_label"));
 				if (bgPage.getItem("linksmenu") == "yes"){$("#linksmenu").attr('checked', 'checked');}
-				$("#linksmenu").click(LinksMenuToggle);
+				$('#linksmenu').click(LinksMenuToggle);
 				$('#linksmenu_label').text(chrome.i18n.getMessage("linksmenu_label"));
+				$('#resetsyncdate').click(bgPage.resetSyncDates);
+				$('#resetsyncdate').attr('value', chrome.i18n.getMessage("resetsyncdate_button"));
+				$('#resetsyncdate_label').text(chrome.i18n.getMessage("resetsyncdate_label"));
+				
             });
         </script>
   </body>

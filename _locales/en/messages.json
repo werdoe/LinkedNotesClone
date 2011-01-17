@@ -103,6 +103,12 @@
 "linksmenu_label": {
 	"message": "Context menu for links"
 	},
+"resetsyncdate_button": {
+	"message": "Reset last synchronization date"
+	},
+"resetsyncdate_label": {
+	"message": "Notes from server will be merged with local notes during next sync"
+	},
 "homepage": {
 	"message": "LinkedNotes Homepage"
 	},
