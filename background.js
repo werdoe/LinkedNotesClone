@@ -698,6 +698,12 @@ function resetSyncDates(){
 		if (allKeys[i].substring(0, 9) == 'last_sync'){
 			window.localStorage.removeItem(allKeys[i]);
 		}
+		else {
+			 var noteText = getItem(allKeys[i]);
+			 if (noteText == DEL_MARK && allKeys[i].indexOf(';') != -1){
+			 	window.localStorage.removeItem(allKeys[i]);
+			 }
+		}
 	}
 }
 
