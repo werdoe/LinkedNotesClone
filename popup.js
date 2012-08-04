@@ -4,6 +4,87 @@
  */
 var bgPage = chrome.extension.getBackgroundPage();
 var logging = true;
+document.addEventListener('DOMContentLoaded', function(){
+    $("#LinkedNotes").splitter({
+        type: "h",
+        sizeTop: true,
+        localStorage: "list_height",
+        accessKey: "P"
+    });
+    notes.BindSearcher("input#quick_search");
+    $.contextMenu.defaults({
+        menuStyle: {
+            fontFamily: "Arial, Helvetica, sans-serif",
+            width: "auto"
+        },
+        itemHoverStyle: {
+            fontFamily: "Arial, Helvetica, sans-serif",
+            border: "1px solid #3366cc",
+            backgroundColor: "rgba(182, 212, 252, 0.496094)",
+        }
+    });
+    $('#NoteText').contextMenu('myMenu1', {
+        onShowMenu: function(e, menu){
+            currentlink.SearchLink();
+            if (!currentlink.IsFound()) {
+                $('#link', menu).remove();
+            }
+            return menu;
+        },
+        bindings: {
+            'copy': function(t){
+                copy();
+            },
+            'paste': function(t){
+                paste();
+            },
+            'font': function(t){
+                notes.SwitchFontsize();
+            },
+            'link': function(t){
+                currentlink.Go();
+            }
+        }
+    });
+    $('textarea.note').select(function(){
+        positionSave();
+    });
+    $('textarea.note').blur(function(){
+        notes.OnBlur(this);
+    });
+    $('textarea.note').change(function(){
+        notes.OnChange(this);
+    });
+    $("a#add_note").attr("title", chrome.i18n.getMessage("add_note"));
+    $("a#add_note").click(function(){
+        notes.AddEmptyNote();
+    });
+    $("input#quick_search").attr("placeholder", chrome.i18n.getMessage("quick_search"));
+    $("a#remove_note").attr("title", chrome.i18n.getMessage("remove_note"));
+    $("a#filter").attr("title", chrome.i18n.getMessage("filter"));
+    $("a#filter").click(function(){
+        notes.Filter();
+    });
+    $("a#sync").attr("title", chrome.i18n.getMessage("sync"));
+    $("a#sync").click(function(){
+        bgPage.Sync(notes);
+    });
+    $("a#add_note span").append(chrome.i18n.getMessage("add_button"));
+    $("a#remove_note span").append(chrome.i18n.getMessage("remove_note"));
+    $("a#sync span").append(chrome.i18n.getMessage("sync_button"));
+    $('li#copy span').text(chrome.i18n.getMessage("menu_copy"));
+    $('li#link span').text(chrome.i18n.getMessage("menu_link"));
+    $("#column-centry").width($("#Menu").width() - $("#column-left").width() - $("#column-right").width() - 4);
+    document.getElementById('NotesList').onselectstart = function(){
+        return false;
+    };
+    notes.FillList();
+    restoreSelection();
+});
+
+window.addEventListener('unload', function(){
+    notes.SaveState();
+});
 
 function List(){
     var l = this;
@@ -21,7 +102,7 @@ function List(){
         if (this.fontSize && this.fontSize == "big") {
             this.SwitchFontsize(this.fontSize);
         }
-		var allKeys = bgPage.getAllKeys();
+        var allKeys = bgPage.getAllKeys();
         var found = false;
         var noteExist = false;
         var nLast = 0;
@@ -53,7 +134,16 @@ function List(){
         el.scrollIntoView(true);
     };
     this.InsertNote = function(note){
-        $("#NotesList").append(note.Item());
+        var span1 = $(document.createElement('span')).addClass(note.icon).append(note.Html(50));
+        var div2 = $(document.createElement('div')).addClass("delete").click(function(){
+            notes.RemoveNote($(this).parent().attr('id'));
+        });
+        var div1 = $(document.createElement('div')).attr("title", note.title).addClass("note").attr("id", note.id).click(function(){
+            notes.SelectNote(this.id);
+        }).dblclick(function(){
+            notes.SelectNoteAndGo(this.id);
+        }).append(span1).append(div2);
+        $("#NotesList").append(div1);
     };
     this.ShowMessage = function(text, color){
         $("div.message").css("display", "none");
@@ -70,9 +160,10 @@ function List(){
         });
     };
     this.SelectNote = function(id, force){
-        if ($("div[id='" + id + "']").length) {
+        var el = document.getElementById(id);
+        if ($(el).length) {
             $("div.highlight").removeClass("highlight");
-            $("div[id='" + id + "']").addClass("highlight");
+            $(el).addClass("highlight");
             if (this.currentId != id) {
                 bgPage.setItem("selection_start", '0');
                 bgPage.setItem("selection_end", '0');
@@ -82,36 +173,42 @@ function List(){
             if (id != this.currentNote.id || force) {
                 this.currentNote = new bgPage.Note(id);
             }
+        	el.scrollIntoView(true);
             this.FillEdit(this.currentNote);
         }
     };
     this.FillEdit = function(note){
-        $("textarea.note").empty();
-        if ($("textarea.note").val().length > 0)
-        {
-        	this.currentId = $("textarea.note").attr("id");
-        	this.currentNote = new bgPage.Note(this.currentId);
-   	        if ($("div[id='" + this.currentId + "']").length) {
-            	$("div.highlight").removeClass("highlight");
-            	$("div[id='" + this.currentId + "']").addClass("highlight");
+        $("textarea.note").val("");
+        if (note.text != bgPage.DEL_MARK) {
+            $("textarea.note").val(note.text);
+            if ($("textarea.note").val() != note.text) {
+                this.currentId = $("textarea.note").attr("id");
+                this.currentNote = new bgPage.Note(this.currentId);
+                if ($("div[id='" + this.currentId + "']").length) {
+                    $("div.highlight").removeClass("highlight");
+                    $("div[id='" + this.currentId + "']").addClass("highlight");
+                }
+                return;
             }
-        	return;
         }
-        if (note.text != bgPage.DEL_MARK) 
-            $("textarea.note").text(note.text);
         $("textarea.note").attr("id", note.id);
         restoreSelection();
     };
-	this.Filter = function(){
-		if($("input#quick_search").attr("value").length > 0){
-			$("input#quick_search").attr("value", "");
-			$("span.filter_button_hi").attr("class", "filter_button");
-			$("a#filter").attr("title", chrome.i18n.getMessage("filter"));
-			l.searchString = ""; l.StartSearch();
-		}
-		else {
-			chrome.tabs.getSelected(null, function(tab) { $("input#quick_search").attr("value", tab.url); l.searchString = tab.url; l.StartSearch();});	
-		}
+    this.Filter = function(){
+        if ($("input#quick_search").attr("value").length > 0) {
+            $("input#quick_search").attr("value", "");
+            $("span.filter_button_hi").attr("class", "filter_button");
+            $("a#filter").attr("title", chrome.i18n.getMessage("filter"));
+            l.searchString = "";
+            l.StartSearch();
+        }
+        else {
+            chrome.tabs.getSelected(null, function(tab){
+                $("input#quick_search").attr("value", tab.url);
+                l.searchString = tab.url;
+                l.StartSearch();
+            });
+        }
     };
     this.SelectNoteAndGo = function(id){
         this.SelectNote(id);
@@ -139,13 +236,12 @@ function List(){
             bgPage.setItem(id, bgPage.DEL_MARK);
             return;
         }
-   
+        
         var next = $("div.highlight + div.note").attr("id");
         if (this.currentId != "") {
-            $("textarea.note").text("");
+            $("textarea.note").val("");
             $("div.highlight").remove();
             bgPage.setItem(this.currentId, bgPage.DEL_MARK);
-            //bgPage.removeItem(this.currentId);
         }
         if (next) {
             this.currentId = next;
@@ -156,7 +252,7 @@ function List(){
         if (this.currentId == undefined) {
             this.currentId = "";
             $("textarea.note").attr("id", "");
-            $("textarea.note").text("");
+            $("textarea.note").val("");
             this.AddEmptyNote();
         }
         else {
@@ -167,7 +263,7 @@ function List(){
         bgPage.setItem("selection_start", $("textarea.note").attr("selectionStart"));
         bgPage.setItem("selection_end", $("textarea.note").attr("selectionEnd"));
         bgPage.setItem("selection_scroll", $("textarea.note").scrollTop());
-        if (object.value == object.defaultValue) {
+        if (object.value == this.currentNote.text) {
             return;
         }
         var newArray = object.id.split(';');
@@ -179,12 +275,17 @@ function List(){
         this.currentNote = new bgPage.Note(newId);
         $("textarea.note").attr("id", newId);
         $("div.highlight").attr("id", newId);
-        $("div.highlight").empty();
-        $("div.highlight").append(this.currentNote.ItemContent());
+        $("div.highlight span").html(this.currentNote.Html(50));
         $("div.highlight").attr("title", this.currentNote.title);
         this.currentId = newId;
         this.SaveState();
     };
+    this.OnBlur = function(object){
+        this.UpdateNote(object);
+    }
+    this.OnChange = function(object){
+        this.UpdateNote(object);
+    }
     this.SaveState = function(){
         bgPage.setItem("selected", this.currentId);
         bgPage.setItem("fontsize", this.fontSize);
@@ -197,10 +298,10 @@ function List(){
         }
     };
     this.StartSearch = function(){
-		if (this.searchString.length > 0){
-			$("span.filter_button").attr("class", "filter_button_hi");
-			$("a#filter").attr("title", chrome.i18n.getMessage("clear_filter"));
-		}
+        if (this.searchString.length > 0) {
+            $("span.filter_button").attr("class", "filter_button_hi");
+            $("a#filter").attr("title", chrome.i18n.getMessage("clear_filter"));
+        }
         var vals = this.searchString.toLowerCase().split(' ');
         var allKeys = bgPage.getAllKeys();
         for (var i = 0; i < allKeys.length; i++) {
@@ -236,8 +337,8 @@ function List(){
     
     this.SwitchFontsize = function(size){
         var s = "small";
-        if (l.normalFontSize == undefined){
-        	l.normalFontSize = $("textarea.note").css("font-size");
+        if (l.normalFontSize == undefined) {
+            l.normalFontSize = $("textarea.note").css("font-size");
         }
         if (size == undefined) {
             if (l.fontSize == "big") {
@@ -292,49 +393,48 @@ function restoreSelection(){
     $("textarea.note").attr("selectionEnd", bgPage.getItem("selection_end"));
     $("textarea.note").scrollTop(bgPage.getItem("selection_scroll"));
 }
+
 function ContextLink(){
-	this.link = "";
-	this.SearchLink = function(){
-		this.link = "";
-		var start = $("textarea.note").attr("selectionStart");
-		var end = $("textarea.note").attr("selectionEnd");
-		var url = /([a-z][a-z0-9\*\-\.]*):\/\/(?:(?:(?:[\w\.\-\+!$&'\(\)*\+,;=]|%[0-9a-f]{2})+:)*(?:[\w\.\-\+%!$&'\(\)*\+,;=]|%[0-9a-f]{2})+@)?(?:(?:[a-z0-9\-\.]|%[0-9a-f]{2})+|(?:\[(?:[0-9a-f]{0,4}:)*(?:[0-9a-f]{0,4})\]))(?::[0-9]+)?(?:[\/|\?](?:[\w#!:\.\?\+=&@!$'~*,;\/\(\)\[\-]|%[0-9a-f]{2})*)?/gi;
-		var url2 = /((magnet:\?xt=urn:)[\w\+%&=:#`~!;\.]*)/gi;
-		var url3 = /(mailto:)?[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/gi;
-		while ((m = url.exec(notes.currentNote.text)) !== null) {
-			if(m.index <= start && (m[0].length + m.index) >= end){
-				this.link = m[0];
-				break;
-			}
-		}
-		if (!this.IsFound())
-		{
-			while ((m = url2.exec(notes.currentNote.text)) !== null) {
-				if(m.index <= start && (m[0].length + m.index) >= end){
-					this.link = m[0];
-					break;
-				}
-			}
-		}
-		if (!this.IsFound())
-		{
-			while ((m = url3.exec(notes.currentNote.text)) !== null) {
-				if(m.index <= start && (m[0].length + m.index) >= end){
-					this.link = m[0];
-					if(this.link.indexOf('mailto:') == -1){
-						this.link = 'mailto:' + this.link;	
-					}
-					break;
-				}
-			}
-		}
-	};
-	
-	this.IsFound = function(){
-		return this.link.length > 0;
-	}
-	
-	this.Go = function(){
+    this.link = "";
+    this.SearchLink = function(){
+        this.link = "";
+        var start = $("textarea.note").attr("selectionStart");
+        var end = $("textarea.note").attr("selectionEnd");
+        var url = /([a-z][a-z0-9\*\-\.]*):\/\/(?:(?:(?:[\w\.\-\+!$&'\(\)*\+,;=]|%[0-9a-f]{2})+:)*(?:[\w\.\-\+%!$&'\(\)*\+,;=]|%[0-9a-f]{2})+@)?(?:(?:[a-z0-9\-\.]|%[0-9a-f]{2})+|(?:\[(?:[0-9a-f]{0,4}:)*(?:[0-9a-f]{0,4})\]))(?::[0-9]+)?(?:[\/|\?](?:[\w#!:\.\?\+=&@!$'~*,;\/\(\)\[\-]|%[0-9a-f]{2})*)?/gi;
+        var url2 = /((magnet:\?xt=urn:)[\w\+%&=:#`~!;\.]*)/gi;
+        var url3 = /(mailto:)?[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/gi;
+        while ((m = url.exec(notes.currentNote.text)) !== null) {
+            if (m.index <= start && (m[0].length + m.index) >= end) {
+                this.link = m[0];
+                break;
+            }
+        }
+        if (!this.IsFound()) {
+            while ((m = url2.exec(notes.currentNote.text)) !== null) {
+                if (m.index <= start && (m[0].length + m.index) >= end) {
+                    this.link = m[0];
+                    break;
+                }
+            }
+        }
+        if (!this.IsFound()) {
+            while ((m = url3.exec(notes.currentNote.text)) !== null) {
+                if (m.index <= start && (m[0].length + m.index) >= end) {
+                    this.link = m[0];
+                    if (this.link.indexOf('mailto:') == -1) {
+                        this.link = 'mailto:' + this.link;
+                    }
+                    break;
+                }
+            }
+        }
+    };
+    
+    this.IsFound = function(){
+        return this.link.length > 0;
+    }
+    
+    this.Go = function(){
         if (this.IsFound()) {
             chrome.tabs.create({
                 "url": this.link,
@@ -355,7 +455,7 @@ function copy(){
     restoreSelection();
     if ($("textarea.note").attr("selectionStart") == $("textarea.note").attr("selectionEnd")) {
         $("textarea.note").attr("selectionStart", 0);
-        $("textarea.note").attr("selectionEnd", $("textarea.note").text().length);
+        $("textarea.note").attr("selectionEnd", $("textarea.note").val().length);
     }
     document.execCommand("copy");
 }

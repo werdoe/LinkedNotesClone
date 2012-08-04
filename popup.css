@@ -1,14 +1,18 @@
 html
 {
   width: 320px;
+  overflow-y:hidden;
 }
 
 body 
 {
 	dir: __MSG_@@bidi_dir__;
+	padding-top: 0px;
+	padding-bottom: 0px;
 	padding-left: 2px;
 	padding-right: 2px;
 	min-width: 90px;
+	height: 480px;
 	font-family: "Helvetica", "Arial", sans-serif;
 	font-size: 80%;
 	overflow:hidden;
@@ -131,7 +135,7 @@ span.filter_button_hi
 
 #LinkedNotes 
 {
-	height: 558px;
+	height: 450px;
 	width: 300px;
 	border: 1px solid;
 	border-color: #d6d6d6;
@@ -141,9 +145,8 @@ span.filter_button_hi
 {
 	overflow: auto;
 	/* Initial/min/max height for this pane */
-	height: 300px;
+	height: 211px;
 	min-height: 0px;
-	max-height: 400px;
 	-webkit-box-flex: 1;
 	-webkit-box-sizing: border-box;
 	padding: 1px 3px 1px 1px;
@@ -204,6 +207,7 @@ div.highlight, div.highlight:hover
 #NoteText
 {
 	overflow: hidden;
+	height: 235px;
 	-webkit-box-flex: 1;
 	-webkit-box-sizing: border-box;
 }
@@ -212,12 +216,15 @@ textarea.note
 {
 	font-family: sans-serif;
 	height: 100%;
-	width: 100%;
+	width: 294px;
 	resize: none;
 	border: 0px;
 	background: #ffd;
 	overflow-x: hidden;
-	padding: 3px;
+	padding-top: 0px;
+	padding-right: 3px;
+	padding-left: 3px;
+	padding-bottom: 0px;
 }
 
 textarea.note:focus 

@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -11,17 +12,17 @@
         <script type="text/javascript" src="jquery.contextmenu.r2.packed.js">
         </script>
     </head>
-    <body onload="notes.FillList();" onUnload="notes.SaveState();">
+    <body>
         <div id="Menu">
-        	<div id="column-left"><a href="javascript:void(0);" class="btn" onclick="notes.AddEmptyNote();" id="add_note"><span class="add_button"></span></a></div>
-            <div id="column-right"><a href="javascript:void(0);" class="btn" onclick="notes.Filter();" id="filter"><span class="filter_button">&nbsp;</span></a><a href="javascript:void(0);" class="btn" onclick="bgPage.Sync(notes);" id="sync"><span class="sync_button"></span></a></div>
+        	<div id="column-left"><a href="javascript:void(0);" class="btn" id="add_note"><span class="add_button"></span></a></div>
+            <div id="column-right"><a href="javascript:void(0);" class="btn" id="filter"><span class="filter_button">&nbsp;</span></a><a href="javascript:void(0);" class="btn" id="sync"><span class="sync_button"></span></a></div>
             <div id="column-centry"><input type="text" placeholder="" spellcheck="false" name="search" id="quick_search"></div>
         </div>
         <div id="LinkedNotes">
-            <div id="NotesList" onselectstart="return false;">
+            <div id="NotesList">
             </div>
             <div id="NoteText">
-                <textarea class="note" cols="43" rows="50" onBlur="notes.UpdateNote(this);" onChange="notes.UpdateNote(this);">
+                <textarea class="note" cols="43" rows="50" autofocus="autofocus">
                 </textarea>
             </div>
         </div>
@@ -40,62 +41,5 @@
         </div>
 		<div class="message">
 		</div>
-        <script type="text/javascript">
-            $().ready(function(){
-                $("#LinkedNotes").splitter({
-                    type: "h",
-                    sizeTop: true,
-                    localStorage: "list_height",
-                    accessKey: "P"
-                });
-                notes.BindSearcher("input#quick_search");
-                $.contextMenu.defaults({
-                    menuStyle: {
-                        fontFamily: "Arial, Helvetica, sans-serif",
-                        width: "auto"
-                    },
-                    itemHoverStyle: {
-                        fontFamily: "Arial, Helvetica, sans-serif",
-                        border: "1px solid #3366cc",
-                        backgroundColor: "rgba(182, 212, 252, 0.496094)",
-                    }
-                });
-                $('#NoteText').contextMenu('myMenu1', {
-					onShowMenu: function(e, menu) {
-        				currentlink.SearchLink();
-						if (!currentlink.IsFound()) {
-          					$('#link', menu).remove();
-        				}
-        				return menu;
-      				},
-                    bindings: {
-                        'copy': function(t){
-							copy();
-                        },
-						'paste': function(t){
-							paste();
-                        },
-						'font': function(t){
-                            notes.SwitchFontsize();
-                        },
-						'link': function(t){
-                            currentlink.Go();
-                        }
-                    }
-                });
-                $('textarea.note').select(positionSave);
-                $("a#add_note").attr("title", chrome.i18n.getMessage("add_note"));
-				$("input#quick_search").attr("placeholder", chrome.i18n.getMessage("quick_search"));
-                $("a#remove_note").attr("title", chrome.i18n.getMessage("remove_note"));
-				$("a#filter").attr("title", chrome.i18n.getMessage("filter"));
-                $("a#sync").attr("title", chrome.i18n.getMessage("sync"));
-                $("a#add_note span").append(chrome.i18n.getMessage("add_button"));
-                $("a#remove_note span").append(chrome.i18n.getMessage("remove_note"));
-                $("a#sync span").append(chrome.i18n.getMessage("sync_button"));
-                $('li.copy span').text(chrome.i18n.getMessage("menu_copy"));
-				$('li.link span').text(chrome.i18n.getMessage("menu_link"));
-				$("#column-centry").width($("#Menu").width() - $("#column-left").width() - $("#column-right").width() - 4);
-            });
-        </script>
     </body>
 </html>

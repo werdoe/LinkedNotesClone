@@ -3,6 +3,38 @@
  *	Autor: Pavel Kolmogorov
  */
 var bgPage = chrome.extension.getBackgroundPage();
+document.addEventListener('DOMContentLoaded', function(){
+                $("#listFont").fontSelector({"onChange": function(){$("#listSample").css("font-family", this.value)}});
+				$("#noteFont").fontSelector({"onChange": function(){$("#noteSample").css("font-family", this.value)}});
+				$("#listFontSize").fontSizeSelector({"onChange": function(){$("#listSample").css("font-size", this.value)}});
+				$("#noteFontSize").fontSizeSelector({"onChange": function(){$("#noteSample").css("font-size", this.value)}});
+				$("#autosync").click(AutoSyncCheckboxToggle);
+				$('#options_header').text(chrome.i18n.getMessage("options_header"));
+				$('title').text(chrome.i18n.getMessage("options_header"));
+				$('#autosync_label').text(chrome.i18n.getMessage("autosync_label"));
+				$('#homepage').text(chrome.i18n.getMessage("homepage"));
+				$('#author').text(chrome.i18n.getMessage("author"));
+				$("#injection").click(InjectionCheckboxToggle);
+				$('#injection_label').text(chrome.i18n.getMessage("injection_label"));
+				$('#linksmenu').click(LinksMenuToggle);
+				$('#linksmenu_label').text(chrome.i18n.getMessage("linksmenu_label"));
+				$('#resetsyncdate').attr('value', chrome.i18n.getMessage("resetsyncdate_button"));
+				$('#resetsyncdate_label').text(chrome.i18n.getMessage("resetsyncdate_label"));
+				displayVersionNumber();
+				setCurrentChecks();
+            });
+
+function setCurrentChecks(){
+    try {
+        var bgPage = chrome.extension.getBackgroundPage();
+        if (bgPage.getItem("linksmenu") == "yes"){$("#linksmenu").attr('checked', 'checked');}
+        if (bgPage.getItem("autosync") == "yes"){$("#autosync").attr('checked', 'checked');}
+        if (bgPage.getItem("injection") == "yes"){$("#injection").attr('checked', 'checked');}
+        $('#resetsyncdate').click(bgPage.resetSyncDates);
+    } 
+    catch (ex) {
+    }
+}
 
 function displayVersionNumber(){
     try {

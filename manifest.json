@@ -1,9 +1,12 @@
 {
   "name": "LinkedNotes",
-  "version": "0.25",
+  "version": "0.26",
+  "manifest_version": 2,
   "description": "__MSG_extDescription__",
   "default_locale": "en",
-  "background_page": "background.html",
+  "background": {
+    "page": "background.html"
+  },
   "options_page": "options.html",
   "permissions": [
     "contextMenus",    
@@ -22,7 +25,7 @@
   "browser_action": {
     "default_title": "LinkedNotes",
     "default_icon": "images/notepad24.png",
-    "popup": "popup.html"
+    "default_popup": "popup.html"
   },
   "minimum_chrome_version": "6.0.0.0"
 }

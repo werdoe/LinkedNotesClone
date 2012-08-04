@@ -2,7 +2,6 @@
  *	LinkedNotes Google Chrome Extension
  *	Autor: Pavel Kolmogorov
  */
-
 var logging = false;
 var parentId = -1;
 var mapMenu = [];
@@ -28,19 +27,19 @@ function Note(id){
     if (this.text == null) {
         this.text = "";
     };
-	this.Title = function(len){
+    this.Title = function(len){
         var escaped = this.text;
         if (escaped != null && escaped != undefined && escaped != "") {
             var newArray = escaped.split('\n');
             for (var i = 0; i < newArray.length; i++) {
-				var testString = '';
-				for (var n = 0; n < newArray[i].length; n++){
-					if (newArray[i].charAt(n) > ' '){
-						testString = newArray[i].substr(n);
-						break; 
-					}
-				}
-				
+                var testString = '';
+                for (var n = 0; n < newArray[i].length; n++) {
+                    if (newArray[i].charAt(n) > ' ') {
+                        testString = newArray[i].substr(n);
+                        break;
+                    }
+                }
+                
                 if (testString.length > 0) {
                     if (testString.length > len) {
                         escaped = testString.substr(0, len);
@@ -52,32 +51,23 @@ function Note(id){
                 }
             }
         }
-		var endTitle = escaped.indexOf('|');
-		if (endTitle != -1){
-			escaped = escaped.substr(0, endTitle);
-		}
-		return escaped;	
-	};
+        var endTitle = escaped.indexOf('|');
+        if (endTitle != -1) {
+            escaped = escaped.substr(0, endTitle);
+        }
+        return escaped;
+    };
     this.Html = function(len){
-		var escaped = this.Title(len);
+        var escaped = this.Title(len);
         var findReplace = [[/&/g, "&amp;"], [/</g, "&lt;"], [/>/g, "&gt;"], [/\"/g, "&quot;"], [/ /g, "&nbsp;"], [/\n/g, "&nbsp;"]];
         for (var i = 0; i < findReplace.length; i++) {
             escaped = escaped.replace(findReplace[i][0], findReplace[i][1]);
         }
-		if (escaped.length < len){
-			escaped += '&nbsp;';
-		}
-		
+        if (escaped.length < len) {
+            escaped += '&nbsp;';
+        }
+        
         return escaped;
-    };
-    this.ItemContent = function(){
-        return '<span class="' + this.icon + '">' + this.Html(50) + '</span><div class="delete" onclick="notes.RemoveNote($(this).parent().attr(\'id\'))"></div>';
-    };
-    this.Item = function(){
-        return '<div title="' + this.title + '" class="note" id="' + this.id +
-        '" ondblclick="notes.SelectNoteAndGo(this.id);" onclick="notes.SelectNote(this.id);">' +
-        this.ItemContent() +
-        '</div>';
     };
     this.Find = function(vals){
         var txt = this.text.toLowerCase();
@@ -98,7 +88,7 @@ function GoogleBookmarks(){
     this.request = null;
     this.bookmarks = [];
     this.needLogin = false;
-	this.notesList = null;
+    this.notesList = null;
     this.Clear = function(){
         this.sig = "";
         this.error = false;
@@ -321,12 +311,12 @@ function GoogleBookmarks(){
             };
             bm.id.push(bookmark.find("bkmk_id:first").text());
             bm.url = bm.url.replace(bm.title, "");
-			if(bm.url.substring(bm.url.length-1) == "3"){
-				bm.url = bm.url.substring(0, bm.url.length-3);
-			}
-			else{
-				bm.url = bm.url.substring(0, bm.url.length-1);
-			}
+            if (bm.url.substring(bm.url.length - 1) == "3") {
+                bm.url = bm.url.substring(0, bm.url.length - 3);
+            }
+            else {
+                bm.url = bm.url.substring(0, bm.url.length - 1);
+            }
             bm.url = bm.url.replace(BLANK_URL, "");
             bm.note = bm.note.replace(/\\\\/gm, "\r");
             bm.note = bm.note.replace(/\\n/gm, "\n");
@@ -360,15 +350,15 @@ function GoogleBookmarks(){
         chrome.browserAction.setIcon({
             'path': 'images/notepad24w.png'
         });
-		updateTitle(null, chrome.i18n.getMessage("msg_need_login"));
-		if(this.notesList != null){
-			try {
-				this.notesList.ShowMessage(chrome.i18n.getMessage("msg_need_login"));
-			}
-			catch (err) {
-				log("Error during show message");
-			}	
-		}
+        updateTitle(null, chrome.i18n.getMessage("msg_need_login"));
+        if (this.notesList != null) {
+            try {
+                this.notesList.ShowMessage(chrome.i18n.getMessage("msg_need_login"));
+            } 
+            catch (err) {
+                log("Error during show message");
+            }
+        }
         chrome.tabs.create({
             "url": this.url,
             "selected": true
@@ -378,34 +368,33 @@ function GoogleBookmarks(){
 
 gbm = new GoogleBookmarks();
 
-function AutoSync()
-{
-	 var autosync = getItem("autosync");
-	 log("Autosync: "+ autosync);
-	 if (autosync == "yes"){
-		 Sync();
-	 }
+function AutoSync(){
+    var autosync = getItem("autosync");
+    log("Autosync: " + autosync);
+    if (autosync == "yes") {
+        Sync();
+    }
 }
 
 function Sync(notes){
-	if(notes != undefined){
-		gbm.notesList = notes;
-	    if (gbm.notesList != null) {
-			try {
-				gbm.notesList.ShowSyncProgress(true);
-			} 
-			catch (err) {
-				log("Error during show sync progress");
-			}
-		}	
-	}
-	else{
-		gbm.notesList = null;
-	}
+    if (notes != undefined) {
+        gbm.notesList = notes;
+        if (gbm.notesList != null) {
+            try {
+                gbm.notesList.ShowSyncProgress(true);
+            } 
+            catch (err) {
+                log("Error during show sync progress");
+            }
+        }
+    }
+    else {
+        gbm.notesList = null;
+    }
     chrome.browserAction.setIcon({
         'path': 'images/notepad24s.png'
     });
-
+    
     $.get(gbm.url + 'lookup', {
         q: "label:LinkedNotes",
         output: "xml"
@@ -426,7 +415,7 @@ function Sync(notes){
 }
 
 function SyncNotes(){
-    if (!gbm.error || gbm.sig == "") {
+    if (!gbm.error && gbm.sig != "") {
         if (logging) 
             console.log("Sync started for : " + gbm.bookmarks.length);
         var last_sync = getItem("last_sync" + gbm.sig);
@@ -515,62 +504,73 @@ function SyncNotes(){
                             break;
                         }
                     }
-                    if (!found) {
-                        removeItem(n.id);
-                        if (logging) 
-                            console.log("Remove note not found on server: " + n.id);
+                    if (gbm.bookmarks.length > 0) { //this is emergency check. It is dangerous operation - remove all notes from local storage
+                        if (!found) {
+                            removeItem(n.id);
+                            if (logging) 
+                                console.log("Remove note not found on server: " + n.id);
+                        }
+                    }
+                    else {
+                        if (gbm.notesList != null) {
+                            try {
+                                gbm.notesList.ShowMessage(chrome.i18n.getMessage("msg_sync_error"), 'red');
+                            } 
+                            catch (err) {
+                                log("Error during show message");
+                            }
+                        }
                     }
                 }
             }
         }
-		if (gbm.notesList != null){
-			try {
-				gbm.notesList.FillList();
-			}
-			catch(err){
-				log("Error during update list");
-			}	
-		}
+        if (gbm.notesList != null) {
+            try {
+                gbm.notesList.FillList();
+            } 
+            catch (err) {
+                log("Error during update list");
+            }
+        }
         
-		setItem("last_sync" + gbm.sig, current_sync_date.getTime());
-		updateTitle(current_sync_date);
-		updateMenu();	
-		try {
-			if (gbm.error) {
-				chrome.browserAction.setIcon({
+        setItem("last_sync" + gbm.sig, current_sync_date.getTime());
+        updateTitle(current_sync_date);
+        updateMenu();
+        try {
+            if (gbm.error) {
+                chrome.browserAction.setIcon({
                     'path': 'images/notepad24w.png'
                 });
-				if (gbm.notesList != null) {
-					gbm.notesList.ShowMessage(chrome.i18n.getMessage("msg_sync_with_errors"), 'red');
-				}
-			}
-			else {
+                if (gbm.notesList != null) {
+                    gbm.notesList.ShowMessage(chrome.i18n.getMessage("msg_sync_with_errors"), 'red');
+                }
+            }
+            else {
                 chrome.browserAction.setIcon({
                     'path': 'images/notepad24.png'
                 });
-				if (gbm.notesList != null) {
-					gbm.notesList.ShowMessage(chrome.i18n.getMessage("msg_sync_success"));
-				}
-			}
-		} 
-		catch (err) {
-			log("Error during show message");
-		}	
-
+                if (gbm.notesList != null) {
+                    gbm.notesList.ShowMessage(chrome.i18n.getMessage("msg_sync_success"));
+                }
+            }
+        } 
+        catch (err) {
+            log("Error during show message");
+        }
+        
     }
     else {
         chrome.browserAction.setIcon({
             'path': 'images/notepad24w.png'
         });
-		if (gbm.notesList != null) {
-			try {
-				gbm.notesList.ShowMessage(chrome.i18n.getMessage("msg_sync_error"), 'red');
-			} 
-			catch (err) {
-				log("Error during show message");
-			}	
-
-		}
+        if (gbm.notesList != null) {
+            try {
+                gbm.notesList.ShowMessage(chrome.i18n.getMessage("msg_sync_error"), 'red');
+            } 
+            catch (err) {
+                log("Error during show message");
+            }
+        }
         if (gbm.sig == "") {
             gbm.Login();
         }
@@ -587,33 +587,33 @@ function SyncNotes(){
 }
 
 function LinksMenu(){
-	this.id = -1;
-	this.Init = function(){
-		var enable = getItem("linksmenu");
-	 	if (enable == "yes") {
-			this.InstallMenu();
-		}
-		else {
-			this.RemoveMenu();
-		}
-	}
-	this.InstallMenu = function(){
+    this.id = -1;
+    this.Init = function(){
+        var enable = getItem("linksmenu");
+        if (enable == "yes") {
+            this.InstallMenu();
+        }
+        else {
+            this.RemoveMenu();
+        }
+    }
+    this.InstallMenu = function(){
         var createPropertiesL = {
             "title": chrome.i18n.getMessage("copy_link_to_note"),
             "type": "normal",
-            "contexts": ["link","page"],
+            "contexts": ["link", "page"],
             "onclick": onCopyLinkToNote
         };
-		if (this.id == -1){
-			this.id = chrome.contextMenus.create(createPropertiesL);	
-		}
-	}
-	this.RemoveMenu = function(){
-		if (this.id != -1){
-			chrome.contextMenus.remove(this.id);
-			this.id = -1;
-		}
-	}	
+        if (this.id == -1) {
+            this.id = chrome.contextMenus.create(createPropertiesL);
+        }
+    }
+    this.RemoveMenu = function(){
+        if (this.id != -1) {
+            chrome.contextMenus.remove(this.id);
+            this.id = -1;
+        }
+    }
 }
 
 var lm = new LinksMenu();
@@ -622,8 +622,10 @@ function removeItem(key){
     try {
         log("Inside removeItem:" + key);
         window.localStorage.removeItem(key);
-		removeSubMenu(key);
-		chrome.tabs.getSelected(null, function(tab) { updateCount(tab);});
+        removeSubMenu(key);
+        chrome.tabs.getSelected(null, function(tab){
+            updateCount(tab);
+        });
     } 
     catch (e) {
         log("Error inside removeItem");
@@ -637,15 +639,17 @@ function setItem(key, value){
         log("Inside setItem:" + key + ":" + value);
         window.localStorage.removeItem(key);
         window.localStorage.setItem(key, value);
-		if (key.indexOf(';') != -1){
-			if(value == DEL_MARK) {
-	        	removeSubMenu(key);
-			}
-			else{
-				createSubMenu(key);
-			}
-			chrome.tabs.getSelected(null, function(tab) { updateCount(tab);});		
-		}
+        if (key.indexOf(';') != -1) {
+            if (value == DEL_MARK) {
+                removeSubMenu(key);
+            }
+            else {
+                createSubMenu(key);
+            }
+            chrome.tabs.getSelected(null, function(tab){
+                updateCount(tab);
+            });
+        }
     } 
     catch (e) {
         log("Error inside setItem");
@@ -692,19 +696,19 @@ function getAllKeys(){
 }
 
 function resetSyncDates(){
-	log("resetSyncDates()");
-	var allKeys = getAllKeys();
+    log("resetSyncDates()");
+    var allKeys = getAllKeys();
     for (var i = 0; i < allKeys.length; i++) {
-		if (allKeys[i].substring(0, 9) == 'last_sync'){
-			window.localStorage.removeItem(allKeys[i]);
-		}
-		else {
-			 var noteText = getItem(allKeys[i]);
-			 if (noteText == DEL_MARK && allKeys[i].indexOf(';') != -1){
-			 	window.localStorage.removeItem(allKeys[i]);
-			 }
-		}
-	}
+        if (allKeys[i].substring(0, 9) == 'last_sync') {
+            window.localStorage.removeItem(allKeys[i]);
+        }
+        else {
+            var noteText = getItem(allKeys[i]);
+            if (noteText == DEL_MARK && allKeys[i].indexOf(';') != -1) {
+                window.localStorage.removeItem(allKeys[i]);
+            }
+        }
+    }
 }
 
 function addNote(url, text, date){
@@ -733,48 +737,51 @@ function onCopyToNote(info, tab){
         chrome.browserAction.setIcon({
             'path': 'images/notepad24hl.png'
         });
-		var inject = getItem("injection");
-	 	if (inject == "yes"){
-			noteTextFromSelection = info.selectionText;
-			chrome.tabs.executeScript(null, {file: "injection.js", allFrames: true});
-			if (tab.url.indexOf("chrome.google.com") != -1)
-			{
-				addNote(tab.url, info.selectionText);
-			}
-	 	}
-		else{
-			addNote(tab.url, info.selectionText);	
-		}
-		
+        var inject = getItem("injection");
+        if (inject == "yes") {
+            noteTextFromSelection = info.selectionText;
+            chrome.tabs.executeScript(null, {
+                file: "injection.js",
+                allFrames: true
+            });
+            if (tab.url.indexOf("chrome.google.com") != -1) {
+                addNote(tab.url, info.selectionText);
+            }
+        }
+        else {
+            addNote(tab.url, info.selectionText);
+        }
+        
         setTimeout(function(){
             chrome.browserAction.setIcon({
                 'path': 'images/notepad24.png'
             });
-			AutoSync();
+            AutoSync();
         }, 1000);
     }
 }
 
 function onCopyLinkToNote(info, tab){
     var url = '';
-	if (info.linkUrl != undefined && info.linkUrl.length > 0) {
+    if (info.linkUrl != undefined && info.linkUrl.length > 0) {
         url = info.linkUrl;
     }
-	else if (info.pageUrl != undefined && info.pageUrl.length > 0) {
-		url = info.pageUrl;
-	}
+    else 
+        if (info.pageUrl != undefined && info.pageUrl.length > 0) {
+            url = info.pageUrl;
+        }
     if (url.length > 0) {
         chrome.browserAction.setIcon({
             'path': 'images/notepad24hl.png'
         });
-		
-		addNote(tab.url, url);	
-		
+        
+        addNote(tab.url, url);
+        
         setTimeout(function(){
             chrome.browserAction.setIcon({
                 'path': 'images/notepad24.png'
             });
-			AutoSync();
+            AutoSync();
         }, 1000);
     }
 }
@@ -786,23 +793,22 @@ function installMenu(){
         "contexts": ["selection"],
         "onclick": onCopyToNote
     };
-	chrome.contextMenus.create(createProperties);
-	lm.Init();
-	updateMenu();
+    chrome.contextMenus.create(createProperties);
+    lm.Init();
+    updateMenu();
 }
 
-function updateMenu()
-{
-	for (var i = 0; i < mapMenu.length; i++) {
-   		if (mapMenu[i][1] != -1) {
-			chrome.contextMenus.remove(mapMenu[i][1]);
-		}
-	}
-	mapMenu = [];
-	if (parentId != -1){
-		chrome.contextMenus.remove(parentId);
-		parentId = -1
-	}
+function updateMenu(){
+    for (var i = 0; i < mapMenu.length; i++) {
+        if (mapMenu[i][1] != -1) {
+            chrome.contextMenus.remove(mapMenu[i][1]);
+        }
+    }
+    mapMenu = [];
+    if (parentId != -1) {
+        chrome.contextMenus.remove(parentId);
+        parentId = -1
+    }
     var createProperties2 = {
         "title": chrome.i18n.getMessage("insert_from_note"),
         "contexts": ["editable"]
@@ -813,41 +819,39 @@ function updateMenu()
     allKeys.sort();
     for (var i = 0; i < allKeys.length; i++) {
         if (allKeys[i].indexOf(';') != -1) {
-			createSubMenu(allKeys[i]);
+            createSubMenu(allKeys[i]);
         }
     }
 };
 
-function createSubMenu(noteId)
-{
+function createSubMenu(noteId){
     var note = new Note(noteId);
     if (note.text == DEL_MARK) {
         return;
     }
-	var title = note.Title(50);
-	if(title == ""){
-		title = " ";
-	}
+    var title = note.Title(50);
+    if (title == "") {
+        title = " ";
+    }
     var mid = chrome.contextMenus.create({
         "title": title,
         "parentId": parentId,
         "contexts": ["editable"],
         "onclick": clickNote
     });
-	mapMenu.push([note.id, mid]);
+    mapMenu.push([note.id, mid]);
     log(chrome.extension.lastError);
 };
 
-function removeSubMenu(noteId)
-{
+function removeSubMenu(noteId){
     for (var i = 0; i < mapMenu.length; i++) {
-		if (mapMenu[i][0] == noteId && mapMenu[i][1] != -1) {
-			chrome.contextMenus.remove(mapMenu[i][1]);
-			mapMenu[i][0] = "";
-			mapMenu[i][1] = -1;
-			break;
-		}
-	}
+        if (mapMenu[i][0] == noteId && mapMenu[i][1] != -1) {
+            chrome.contextMenus.remove(mapMenu[i][1]);
+            mapMenu[i][0] = "";
+            mapMenu[i][1] = -1;
+            break;
+        }
+    }
 };
 
 function clickNote(x, tab){
@@ -855,20 +859,24 @@ function clickNote(x, tab){
     for (var i = 0; i < mapMenu.length; i++) {
         if (mapMenu[i][1] == x.menuItemId) {
             var note = new Note(mapMenu[i][0]);
-			var txt = note.text;
-			var endTitle = txt.indexOf('|');
-			if (endTitle != -1 && endTitle < 50){
-				var del = (txt.charAt(endTitle+1) == '\n')?2:1;
-				txt = txt.substr(endTitle+del);
-			}
-			var lengthNote = txt.length;
-			txt = txt.replace(/\\/gm, "\\\\");
+            var txt = note.text;
+            var endTitle = txt.indexOf('|');
+            if (endTitle != -1 && endTitle < 50) {
+                var del = (txt.charAt(endTitle + 1) == '\n') ? 2 : 1;
+                txt = txt.substr(endTitle + del);
+            }
+            var lengthNote = txt.length;
+            txt = txt.replace(/\\/gm, "\\\\");
             txt = txt.replace(/'/gm, "\\'");
-			txt = txt.replace(/\n/gm, "\\n");
+            txt = txt.replace(/\n/gm, "\\n");
             var code = "var focused_el = document.activeElement;" +
             "if(focused_el != null && (focused_el.tagName.toLowerCase() == 'input' || focused_el.tagName.toLowerCase() == 'textarea')){	var text = focused_el.value; var start = focused_el.selectionStart;var end = focused_el.selectionEnd;" +
-            "focused_el.value = text.substr(0, start) +'" + txt + "' + text.slice(end);	focused_el.selectionStart = start +"+ lengthNote +"; focused_el.selectionEnd = focused_el.selectionStart;}";
-			log(code);
+            "focused_el.value = text.substr(0, start) +'" +
+            txt +
+            "' + text.slice(end);	focused_el.selectionStart = start +" +
+            lengthNote +
+            "; focused_el.selectionEnd = focused_el.selectionStart;}";
+            log(code);
             chrome.tabs.executeScript(tab.id, {
                 "allFrames": true,
                 "code": code
@@ -882,26 +890,27 @@ function updateCount(tab, count){
     if (count != undefined) {
         cnotes = count;
     }
-    else if (tab.url != ''){
-        cnotes = 0;
-        var allKeys = getAllKeys();
-        allKeys.sort();
-        for (var i = 0; i < allKeys.length; i++) {
-            if (allKeys[i].indexOf(';') != -1) {
-                var note = new Note(allKeys[i]);
-                if (note.text == DEL_MARK) {
-                    continue;
-                }
-                if (note.url.indexOf(tab.url) != -1) {
-                    cnotes++;
+    else 
+        if (tab.url != '') {
+            cnotes = 0;
+            var allKeys = getAllKeys();
+            allKeys.sort();
+            for (var i = 0; i < allKeys.length; i++) {
+                if (allKeys[i].indexOf(';') != -1) {
+                    var note = new Note(allKeys[i]);
+                    if (note.text == DEL_MARK) {
+                        continue;
+                    }
+                    if (note.url.indexOf(tab.url) != -1) {
+                        cnotes++;
+                    }
                 }
             }
         }
+    txt = "";
+    if (cnotes > 0) {
+        txt += cnotes;
     }
-	txt = "";
-	if (cnotes > 0){
-		txt += cnotes;
-	}
     chrome.browserAction.setBadgeBackgroundColor({
         color: [0, 0, 255, 100],
         tabId: tab.id
@@ -912,15 +921,17 @@ function updateCount(tab, count){
     });
 }
 
-function updateTitle(date, text) {
-	var str = "LinkedNotes";
-	if (date != null) {
-		str += "\n" + chrome.i18n.getMessage("last_sync") + " " + date.toLocaleDateString() + " " + date.toLocaleTimeString(); 
-	}
-	if (text != undefined){
-		str += "\n" + text;
-	} 
-	chrome.browserAction.setTitle({title: str});
+function updateTitle(date, text){
+    var str = "LinkedNotes";
+    if (date != null) {
+        str += "\n" + chrome.i18n.getMessage("last_sync") + " " + date.toLocaleDateString() + " " + date.toLocaleTimeString();
+    }
+    if (text != undefined) {
+        str += "\n" + text;
+    }
+    chrome.browserAction.setTitle({
+        title: str
+    });
 }
 
 
@@ -932,42 +943,41 @@ function log(txt){
 
 installMenu();
 
-chrome.tabs.onCreated.addListener(function(tab) {
+chrome.tabs.onCreated.addListener(function(tab){
     updateCount(tab);
-	var inject = getItem("injection");
-	if (inject == "yes") {
-		chrome.tabs.executeScript(tab.id, {
-			file: "keyhook.js",
-			allFrames: true
-		});
-	}
+    var inject = getItem("injection");
+    if (inject == "yes") {
+        chrome.tabs.executeScript(tab.id, {
+            file: "keyhook.js",
+            allFrames: true
+        });
+    }
 });
 
-chrome.tabs.onUpdated.addListener(function(tabId,changeInfo,tab) {
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab){
     updateCount(tab);
 });
 
 chrome.extension.onConnect.addListener(function(port){
     var tab = port.sender.tab;
     port.onMessage.addListener(function(info){
-		if (info.id == 'note'){
-			if (info.selectionText.length == 0)
-			{
-				info.selectionText = noteTextFromSelection;
-			}
-			var text = (info.linksText.length > 0) ? info.selectionText + '\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n' + info.linksText : info.selectionText;
-			if (text.length > 0){
-				addNote(tab.url, text);	
-			}		
-		}
+        if (info.id == 'note') {
+            if (info.selectionText.length == 0) {
+                info.selectionText = noteTextFromSelection;
+            }
+            var text = (info.linksText.length > 0) ? info.selectionText + '\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n' + info.linksText : info.selectionText;
+            if (text.length > 0) {
+                addNote(tab.url, text);
+            }
+        }
     });
 });
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse){
     if (request.id == 'key') {
         console.log('key shortcut');
-		onCopyToNote(request, sender.tab);
+        onCopyToNote(request, sender.tab);
     }
 });
-	
+
 setInterval(AutoSync, 600000);

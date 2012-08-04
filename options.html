@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
   <head>
     <title>LinkedNotes Extension Options</title>
@@ -5,7 +6,7 @@
 	<script type="text/javascript" src="jquery.js"></script>
 	<script type="text/javascript" src="options.js"></script>
   </head>
-  <body onload="displayVersionNumber();">
+  <body>
     <div id="content">
     <div id="header"><img src='images/notepad48.png' alt="LinkedNotes"> LinkedNotes v<span id="version_number"></span><br><span id="options_header">Chrome Extension Options</span></div>
     <div class="option_row">
@@ -58,30 +59,5 @@
     <div class="footer"><a href="http://linkednotes.googlecode.com/"><span id="homepage">LinkedNotes Homepage</span></a></div>
     <div class="footer"><a href="https://www.google.com/bookmarks/"><span id="homepage">Google Bookmarks</span></a></div>
     <div class="footer" id="author">Author: Pavel Kolmogorov</div>
-	      <script type="text/javascript">
-            $().ready(function(){
-                $("#listFont").fontSelector({"onChange": function(){$("#listSample").css("font-family", this.value)}});
-				$("#noteFont").fontSelector({"onChange": function(){$("#noteSample").css("font-family", this.value)}});
-				$("#listFontSize").fontSizeSelector({"onChange": function(){$("#listSample").css("font-size", this.value)}});
-				$("#noteFontSize").fontSizeSelector({"onChange": function(){$("#noteSample").css("font-size", this.value)}});
-				if (bgPage.getItem("autosync") == "yes"){$("#autosync").attr('checked', 'checked');}
-				$("#autosync").click(AutoSyncCheckboxToggle);
-				$('#options_header').text(chrome.i18n.getMessage("options_header"));
-				$('title').text(chrome.i18n.getMessage("options_header"));
-				$('#autosync_label').text(chrome.i18n.getMessage("autosync_label"));
-				$('#homepage').text(chrome.i18n.getMessage("homepage"));
-				$('#author').text(chrome.i18n.getMessage("author"));
-				if (bgPage.getItem("injection") == "yes"){$("#injection").attr('checked', 'checked');}
-				$("#injection").click(InjectionCheckboxToggle);
-				$('#injection_label').text(chrome.i18n.getMessage("injection_label"));
-				if (bgPage.getItem("linksmenu") == "yes"){$("#linksmenu").attr('checked', 'checked');}
-				$('#linksmenu').click(LinksMenuToggle);
-				$('#linksmenu_label').text(chrome.i18n.getMessage("linksmenu_label"));
-				$('#resetsyncdate').click(bgPage.resetSyncDates);
-				$('#resetsyncdate').attr('value', chrome.i18n.getMessage("resetsyncdate_button"));
-				$('#resetsyncdate_label').text(chrome.i18n.getMessage("resetsyncdate_label"));
-				
-            });
-        </script>
   </body>
 </html>
