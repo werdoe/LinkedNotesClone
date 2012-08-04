@@ -173,7 +173,6 @@ function List(){
             if (id != this.currentNote.id || force) {
                 this.currentNote = new bgPage.Note(id);
             }
-        	el.scrollIntoView(true);
             this.FillEdit(this.currentNote);
         }
     };
